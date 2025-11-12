@@ -19,9 +19,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Make start scripts executable
-RUN chmod +x start.sh start.py
-
 # Create instance directory for SQLite (if nseeded)
 RUN mkdir -p instance
 
