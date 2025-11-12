@@ -5,7 +5,7 @@
 builder = "DOCKERFILE"
 
 [deploy]
-startCommand = "gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app.app:app"
+# Railway will use the CMD from Dockerfile which properly handles $PORT
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
