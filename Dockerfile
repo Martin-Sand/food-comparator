@@ -19,8 +19,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Make start script executable
-RUN chmod +x start.sh
+# Make start scripts executable
+RUN chmod +x start.sh start.py
 
 # Create instance directory for SQLite (if nseeded)
 RUN mkdir -p instance
@@ -28,7 +28,7 @@ RUN mkdir -p instance
 # Set environment variables
 ENV FLASK_APP=app/app.py
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8080
 
-# Run the application using startup script
-CMD ["./start.sh"]
+# Run the application using gunicorn directly with shell form
+# Shell form is required for environment variable expansion
+CMD gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app.app:app
