@@ -9,6 +9,7 @@ from functools import wraps
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash, abort
 from dotenv import load_dotenv
 import secrets
+import time as _time
 import requests
 from PIL import Image
 import pytesseract
@@ -231,23 +232,30 @@ class SharedComparison(db.Model):
         return f'<SharedComparison {self.token}>'
 
 
-class ProductDataCache(db.Model):
-    """Temporary storage for product comparison data (works across Railway instances)"""
-    __tablename__ = 'product_data_cache'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    cache_key = db.Column(db.String(32), unique=True, nullable=False, index=True)
-    data = db.Column(db.JSON, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    def __repr__(self):
-        return f'<ProductDataCache {self.cache_key}>'
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, int(user_id))
 
 
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
+
+# ============================
+# Lightweight in-memory cache for large payloads
+# ============================
+PRODUCT_DATA_CACHE: Dict[str, Dict[str, Any]] = {}
+PRODUCT_DATA_TTL_SECONDS = 15 * 60  # 15 minutes
+
+def _prune_product_cache():
+    now = _time.time()
+    to_delete = []
+    for k, v in PRODUCT_DATA_CACHE.items():
+        ts = v.get('ts', 0)
+        if now - ts > PRODUCT_DATA_TTL_SECONDS:
+            to_delete.append(k)
+    for k in to_delete:
+        PRODUCT_DATA_CACHE.pop(k, None)
 
 # ============================
 # Authentication Routes
@@ -1488,35 +1496,21 @@ Return JSON with these fields (use null if not found):
         return jsonify({'error': f'Failed to extract nutrition values: {str(e)}'}), 500
 
 
-# Product data storage/retrieval using database (works across Railway instances)
+# Session product data storage/retrieval to avoid long URLs
 @app.route('/set_product_data', methods=['POST'])
 @login_required
 def set_product_data():
     payload = request.json
     if not isinstance(payload, dict):
         return jsonify({'error': 'Invalid payload'}), 400
-    
-    try:
-        # Clean up old cache entries (older than 1 hour)
-        from datetime import timedelta
-        one_hour_ago = datetime.utcnow() - timedelta(hours=1)
-        ProductDataCache.query.filter(ProductDataCache.created_at < one_hour_ago).delete()
-        
-        # Create new cache entry
-        key = secrets.token_urlsafe(16)
-        cache_entry = ProductDataCache(
-            user_id=current_user.id,
-            cache_key=key,
-            data=payload
-        )
-        db.session.add(cache_entry)
-        db.session.commit()
-        
-        return jsonify({'ok': True, 'key': key})
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error storing product data: {e}")
-        return jsonify({'error': 'Failed to store data'}), 500
+    _prune_product_cache()
+    key = secrets.token_urlsafe(16)
+    PRODUCT_DATA_CACHE[key] = {
+        'ts': _time.time(),
+        'data': payload
+    }
+    # Return a small key; do NOT store large data in cookie/session
+    return jsonify({'ok': True, 'key': key})
 
 
 @app.route('/get_product_data', methods=['GET'])
@@ -1525,21 +1519,11 @@ def get_product_data():
     key = request.args.get('key')
     if not key:
         return jsonify({'error': 'Missing key'}), 400
-    
-    try:
-        # Find cache entry
-        cache_entry = ProductDataCache.query.filter_by(
-            cache_key=key,
-            user_id=current_user.id
-        ).first()
-        
-        if not cache_entry:
-            return jsonify({'error': 'Not found or expired'}), 404
-        
-        return jsonify(cache_entry.data)
-    except Exception as e:
-        print(f"Error retrieving product data: {e}")
-        return jsonify({'error': 'Failed to retrieve data'}), 500
+    _prune_product_cache()
+    entry = PRODUCT_DATA_CACHE.get(key)
+    if not entry:
+        return jsonify({'error': 'Not found or expired'}), 404
+    return jsonify(entry.get('data') or {})
 
 
 # Product search and comparison
