@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Categories - Product Comparator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .edit-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .edit-header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .edit-header h1 {
+            color: #3a3a6a;
+            margin: 0 0 10px 0;
+            font-size: 1.8em;
+        }
+        
+        .edit-subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .category-editor {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .selected-categories-section {
+            margin-bottom: 30px;
+        }
+        
+        .selected-categories-section h3 {
+            color: #3a3a6a;
+            margin-bottom: 15px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .btn-save {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-cancel {
+            padding: 15px 40px;
+            background: #f7f7fb;
+            color: #666;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-cancel:hover {
+            background: #e7e7f7;
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                {% if current_user.is_authenticated %}
+                    <div class="user-account-info">
+                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        {% if current_user.is_subscribed() %}
+                            <span class="badge-premium">Premium</span>
+                        {% else %}
+                            <span class="badge-free">Free</span>
+                        {% endif %}
+                    </div>
+                    <div class="user-actions">
+                        <a href="{{ url_for('profile_page') }}" class="auth-link">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    
+    <div class="edit-page">
+        <div class="edit-header">
+            <h1>📋 Edit Categories</h1>
+            <div class="edit-subtitle" id="search-name-display"></div>
+        </div>
+        
+        <div class="category-editor">
+            <div class="selected-categories-section">
+                <h3>Currently Selected Categories:</h3>
+                <div id="selected-categories"></div>
+            </div>
+            
+            <div id="category-selectors"></div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn-save" id="save-btn">💾 Save Changes</button>
+            <button class="btn-cancel" id="cancel-btn">Cancel</button>
+        </div>
+    </div>
+    
+    <script>
+        let selectedCategories = [];
+        let categoryTree = [];
+        let searchId = null;
+        let searchName = '';
+        let originalData = null;
+        
+        // Load category tree
+        async function loadCategoryTree() {
+            const res = await fetch('/category_tree');
+            const data = await res.json();
+            categoryTree = data.tree;
+            renderCategorySelectors();
+        }
+        
+        // Copy the category selector rendering from main.js
+        function renderCategorySelectors() {
+            const container = document.getElementById('category-selectors');
+            container.innerHTML = '';
+            
+            const treeView = document.createElement('div');
+            treeView.className = 'category-tree-view';
+            
+            const header = document.createElement('h3');
+            header.className = 'tree-header';
+            header.textContent = 'Browse and select categories:';
+            treeView.appendChild(header);
+
+            const searchWrap = document.createElement('div');
+            searchWrap.className = 'tree-search';
+            const searchInput = document.createElement('input');
+            searchInput.type = 'text';
+            searchInput.id = 'category-search';
+            searchInput.placeholder = 'Search categories...';
+            searchWrap.appendChild(searchInput);
+            treeView.appendChild(searchWrap);
+            
+            const treeContainer = document.createElement('div');
+            treeContainer.className = 'tree-container';
+            
+            renderCategoryTree(categoryTree, treeContainer, [], false);
+            
+            treeView.appendChild(treeContainer);
+            
+            const addButton = document.createElement('button');
+            addButton.type = 'button';
+            addButton.className = 'add-categories-btn';
+            addButton.textContent = 'Add Selected Categories';
+            addButton.onclick = addSelectedTreeCategories;
+            treeView.appendChild(addButton);
+            
+            container.appendChild(treeView);
+
+            searchInput.addEventListener('input', () => {
+                const q = searchInput.value.trim().toLowerCase();
+                const filtered = q ? filterCategoryTree(categoryTree, q) : categoryTree;
+                treeContainer.innerHTML = '';
+                renderCategoryTree(filtered, treeContainer, [], Boolean(q));
+            });
+        }
+        
+        function renderCategoryTree(categories, container, parentPath, forceExpanded = false) {
+            const sorted = (categories || []).slice().sort((a, b) => String(a.name).localeCompare(String(b.name), undefined, { sensitivity: 'base' }));
+            sorted.forEach(category => {
+                const item = document.createElement('div');
+                item.className = 'tree-item';
+                
+                const itemContent = document.createElement('div');
+                itemContent.className = 'tree-item-content';
+                
+                const hasChildren = category.children && category.children.length > 0;
+                
+                if (hasChildren) {
+                    const expandIcon = document.createElement('span');
+                    expandIcon.className = 'expand-icon';
+                    expandIcon.textContent = forceExpanded ? '▼' : '▶';
+                    itemContent.appendChild(expandIcon);
+                    
+                    expandIcon.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isExpanded = expandIcon.textContent === '▼';
+                        expandIcon.textContent = isExpanded ? '▶' : '▼';
+                        const childContainer = item.querySelector('.tree-children');
+                        if (childContainer) {
+                            childContainer.style.display = isExpanded ? 'none' : 'block';
+                        }
+                    });
+                }
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'tree-checkbox';
+                checkbox.value = category.id;
+                
+                const fullPath = [...parentPath, category.name].join(' > ');
+                checkbox.dataset.fullPath = fullPath;
+                
+                itemContent.appendChild(checkbox);
+                
+                const label = document.createElement('span');
+                label.className = 'tree-label';
+                label.textContent = category.name;
+                itemContent.appendChild(label);
+                
+                item.appendChild(itemContent);
+                
+                if (hasChildren) {
+                    const childContainer = document.createElement('div');
+                    childContainer.className = 'tree-children';
+                    childContainer.style.display = forceExpanded ? 'block' : 'none';
+                    renderCategoryTree(category.children, childContainer, [...parentPath, category.name], forceExpanded);
+                    item.appendChild(childContainer);
+                }
+                
+                container.appendChild(item);
+            });
+        }
+        
+        function filterCategoryTree(categories, query) {
+            const results = [];
+            for (const cat of categories) {
+                if (cat.name.toLowerCase().includes(query)) {
+                    results.push({ ...cat });
+                } else if (cat.children && cat.children.length > 0) {
+                    const filteredChildren = filterCategoryTree(cat.children, query);
+                    if (filteredChildren.length > 0) {
+                        results.push({ ...cat, children: filteredChildren });
+                    }
+                }
+            }
+            return results;
+        }
+        
+        function addSelectedTreeCategories() {
+            const checkboxes = document.querySelectorAll('.tree-checkbox:checked');
+            let addedCount = 0;
+            
+            checkboxes.forEach(checkbox => {
+                const id = checkbox.value;
+                const fullPath = checkbox.dataset.fullPath;
+                
+                if (!selectedCategories.some(c => c.id === id)) {
+                    selectedCategories.push({ 
+                        id: id, 
+                        name: fullPath 
+                    });
+                    addedCount++;
+                }
+            });
+            
+            if (addedCount > 0) {
+                renderSelectedCategories();
+            }
+            
+            if (checkboxes.length === 0) {
+                alert('Please select at least one category first.');
+            }
+        }
+        
+        function renderSelectedCategories() {
+            const div = document.getElementById('selected-categories');
+            div.innerHTML = '';
+            selectedCategories.forEach((cat, idx) => {
+                const el = document.createElement('span');
+                el.className = 'selected-category';
+                el.textContent = cat.name;
+                const remove = document.createElement('button');
+                remove.textContent = '×';
+                remove.onclick = () => {
+                    selectedCategories.splice(idx, 1);
+                    renderSelectedCategories();
+                };
+                el.appendChild(remove);
+                div.appendChild(el);
+            });
+        }
+        
+        // Load the editing data
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadCategoryTree();
+            
+            const editingData = sessionStorage.getItem('editingCategories');
+            if (editingData) {
+                const data = JSON.parse(editingData);
+                searchId = data.id;
+                searchName = data.name;
+                originalData = data;
+                
+                document.getElementById('search-name-display').textContent = `Editing: ${searchName}`;
+                
+                if (data.selected_categories && Array.isArray(data.selected_categories)) {
+                    selectedCategories = data.selected_categories.map(cat => ({
+                        id: cat.id || cat,
+                        name: cat.name || cat
+                    }));
+                    renderSelectedCategories();
+                }
+            } else {
+                alert('No editing data found. Redirecting to saved searches.');
+                window.location.href = '/saved_searches';
+            }
+        });
+        
+        // Save button
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            if (selectedCategories.length === 0) {
+                alert('Please select at least one category.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/update_search/${searchId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        selected_categories: selectedCategories
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Categories updated successfully!');
+                    sessionStorage.removeItem('editingCategories');
+                    window.location.href = '/saved_searches';
+                } else {
+                    alert('Failed to update: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save changes');
+            }
+        });
+        
+        // Cancel button
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+            if (confirm('Discard changes and go back?')) {
+                sessionStorage.removeItem('editingCategories');
+                window.location.href = '/saved_searches';
+            }
+        });
+    </script>
+</body>
+</html>

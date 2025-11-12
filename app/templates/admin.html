@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Food Comparator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .admin-header {
+            margin-bottom: 40px;
+        }
+
+        .admin-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .admin-nav a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .admin-nav a:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        .admin-nav a.active {
+            background: #4299e1;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #4299e1;
+        }
+
+        .stat-card.premium {
+            border-left-color: #48bb78;
+        }
+
+        .stat-card.free {
+            border-left-color: #ed8936;
+        }
+
+        .stat-card.shared {
+            border-left-color: #9f7aea;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2d3748;
+            line-height: 1;
+        }
+
+        .stat-subtext {
+            font-size: 13px;
+            color: #a0aec0;
+            margin-top: 8px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .user-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-email {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .user-date {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.premium {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge.free {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .shared-link-item {
+            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .shared-link-item:last-child {
+            border-bottom: none;
+        }
+
+        .shared-link-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .shared-link-owner {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .shared-link-stats {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .link-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #4299e1;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .link-button:hover {
+            background: #3182ce;
+        }
+
+        .link-button.secondary {
+            background: #718096;
+        }
+
+        .link-button.secondary:hover {
+            background: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                <div class="user-account-info">
+                    <span class="user-email">👤 {{ current_user.email }}</span>
+                    {% if current_user.is_subscribed() %}
+                        <span class="badge-premium">Premium</span>
+                    {% else %}
+                        <span class="badge-free">Free</span>
+                    {% endif %}
+                </div>
+                <div class="user-actions">
+                    <a href="{{ url_for('admin_dashboard') }}" class="auth-link">Admin</a>
+                    <a href="{{ url_for('profile_page') }}" class="auth-link">Profile</a>
+                    <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🛡️ Admin Dashboard</h1>
+            <p style="color: #718096;">Welcome, {{ current_user.email }}</p>
+            
+            <div class="admin-nav">
+                <a href="/admin" class="active">Dashboard</a>
+                <a href="/admin/users">User Management</a>
+                <a href="/admin/shared-links">Shared Links</a>
+                <a href="/admin/categories">Categories</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value">{{ total_users }}</div>
+                <div class="stat-subtext">Registered accounts</div>
+            </div>
+
+            <div class="stat-card premium">
+                <div class="stat-label">Premium Users</div>
+                <div class="stat-value">{{ premium_users }}</div>
+                <div class="stat-subtext">{{ "%.1f"|format((premium_users / total_users * 100) if total_users > 0 else 0) }}% conversion rate</div>
+            </div>
+
+            <div class="stat-card free">
+                <div class="stat-label">Free Users</div>
+                <div class="stat-value">{{ free_users }}</div>
+                <div class="stat-subtext">Potential conversions</div>
+            </div>
+
+            <div class="stat-card shared">
+                <div class="stat-label">Shared Links</div>
+                <div class="stat-value">{{ active_shared_links }}</div>
+                <div class="stat-subtext">{{ total_views }} total views</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">Recent Signups</div>
+            <ul class="user-list">
+                {% for user in recent_users %}
+                <li class="user-item">
+                    <div>
+                        <div class="user-email">{{ user.email }}</div>
+                        <div class="user-date">{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                    </div>
+                    <span class="badge {{ 'premium' if user.subscription_status == 'active' else 'free' }}">
+                        {{ user.subscription_status or 'free' }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            <div style="margin-top: 20px;">
+                <a href="/admin/users" class="link-button">View All Users →</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">Most Viewed Shared Comparisons</div>
+            {% if popular_shared %}
+            <div>
+                {% for shared in popular_shared %}
+                <div class="shared-link-item">
+                    <div class="shared-link-header">
+                        <span class="shared-link-owner">{{ shared.user.email }}</span>
+                        <span class="shared-link-stats">{{ shared.view_count }} views</span>
+                    </div>
+                    <div style="font-size: 14px; color: #718096; margin-bottom: 8px;">
+                        Created {{ shared.created_at.strftime('%Y-%m-%d') }}
+                    </div>
+                    <a href="/shared/{{ shared.token }}" class="link-button secondary" target="_blank">View Link</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: #718096;">No shared comparisons yet.</p>
+            {% endif %}
+            <div style="margin-top: 20px;">
+                <a href="/admin/shared-links" class="link-button">Manage All Links →</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">System Statistics</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div>
+                    <div style="font-size: 14px; color: #718096; margin-bottom: 4px;">Saved Searches</div>
+                    <div style="font-size: 24px; font-weight: 600;">{{ total_searches }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 14px; color: #718096; margin-bottom: 4px;">Total Shared Links</div>
+                    <div style="font-size: 24px; font-weight: 600;">{{ total_shared_links }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 14px; color: #718096; margin-bottom: 4px;">Active Links</div>
+                    <div style="font-size: 24px; font-weight: 600;">{{ active_shared_links }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

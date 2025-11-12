@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Comparator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                {% if current_user.is_authenticated %}
+                    <div class="user-account-info">
+                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        {% if current_user.is_subscribed() %}
+                            <span class="badge-premium">Premium</span>
+                        {% else %}
+                            <span class="badge-free">Free</span>
+                        {% endif %}
+                    </div>
+                    <div class="user-actions">
+                        {% if current_user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="auth-link">Admin</a>
+                        {% endif %}
+                        <a href="{{ url_for('profile_page') }}" class="auth-link">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="user-actions">
+                        <a href="{{ url_for('login') }}" class="auth-link">Login</a>
+                        <a href="{{ url_for('register') }}" class="auth-link">Register</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="compare">
+                <span class="tab-label">Compare</span>
+                <span class="tab-description">Compare products to your own</span>
+            </button>
+            <button class="mode-tab" data-mode="explore">
+                <span class="tab-label">Explore</span>
+                <span class="tab-description">Browse and discover products</span>
+            </button>
+        </div>
+        
+        <!-- Usage Info for Free Users in Explore Mode -->
+        {% if current_user.is_authenticated and not current_user.is_subscribed() %}
+        <div class="usage-info" id="usage-info-explore" style="display: none;">
+            <div class="usage-card">
+                <span class="usage-icon">🔍</span>
+                <div class="usage-text">
+                    <strong>Free Explore Mode:</strong> 
+                    <span id="remaining-explores">{{ current_user.get_remaining_explores() }}</span> of 3 searches remaining today
+                </div>
+                <a href="{{ url_for('pricing_page') }}" class="upgrade-link">Upgrade to Premium</a>
+            </div>
+        </div>
+        <div class="usage-info" id="usage-info-compare" style="display: none;">
+            <div class="usage-card">
+                <span class="usage-icon">⚖️</span>
+                <div class="usage-text">
+                    <strong>Free Compare Mode:</strong> 
+                    <span id="remaining-compares">{{ current_user.get_remaining_compares() }}</span> of 1 comparison remaining today
+                </div>
+                <a href="{{ url_for('pricing_page') }}" class="upgrade-link">Upgrade to Premium</a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <form id="product-form">
+            <!-- User Product Section - only visible in Compare mode -->
+            <div id="my-product-section" class="my-product-section">
+                <div class="section-header">
+                    <h2 class="section-title">Your Product</h2>
+                    {% if current_user.is_authenticated and current_user.is_subscribed() %}
+                    <div class="saved-searches-dropdown dropdown">
+                        <button type="button" class="dropdown-btn" id="saved-searches-dropdown-btn">💾 Saved Searches ▾</button>
+                        <div class="dropdown-content" id="saved-searches-dropdown">
+                            <div class="dropdown-loading">Loading...</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="name">Product Name</label>
+                    <input type="text" name="name" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" rows="2"></textarea>
+                </div>
+                
+                <!-- Unit Selection -->
+                <div class="form-group">
+                    <label>Nutrition Unit</label>
+                    <div class="unit-selector">
+                        <label class="unit-option">
+                            <input type="radio" name="nutrition_unit" value="g" checked>
+                            <span>per 100g</span>
+                        </label>
+                        <label class="unit-option">
+                            <input type="radio" name="nutrition_unit" value="ml">
+                            <span>per 100ml</span>
+                        </label>
+                    </div>
+                    <small class="help-text">Select the unit that matches your product type</small>
+                </div>
+                
+                <fieldset class="nutrition-group">
+                    <legend>Nutrition (<span id="nutrition-legend-unit">per 100g</span>)</legend>
+                    <button type="button" id="paste-nutrition-btn" class="secondary-btn" style="margin-bottom: 1rem;">📋 Paste Nutrition Text</button>
+                    <div class="nutrition-fields">
+                        <!-- Macro clusters at top -->
+                        <div class="macro-cluster">
+                            <div class="macro-cluster-header">Fat</div>
+                            <div class="macro-cluster-body">
+                                <label>Total fat (g)<input type="number" step="any" name="fett_totalt" id="fett_totalt"></label>
+                                <button type="button" id="toggle-fat-breakdown" class="secondary-btn cluster-btn">Specify breakdown</button>
+                                <div id="fat-breakdown" class="fat-breakdown" style="display:none;">
+                                    <div class="fat-breakdown-header">Optional fat breakdown (specify what you know)</div>
+                                    <div class="fat-breakdown-fields">
+                                        <div><label>Saturated (g)<input type="number" step="any" name="mettet_fett" id="mettet_fett"></label></div>
+                                        <div><label>Monounsaturated (g)<input type="number" step="any" name="enumettet_fett" id="enumettet_fett"></label></div>
+                                        <div><label>Polyunsaturated (g)<input type="number" step="any" name="flerumettet_fett" id="flerumettet_fett"></label></div>
+                                        <div class="fat-breakdown-note">Leave blank if unknown. Specify only what you know - the values don't need to add up to total fat.</div>
+                                        <div id="fat-breakdown-warning" class="fat-breakdown-warning" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="macro-cluster">
+                            <div class="macro-cluster-header">Carbohydrates</div>
+                            <div class="macro-cluster-body">
+                                <label>Total carbs (g)<input type="number" step="any" name="karbohydrater" id="karbohydrater"></label>
+                                <button type="button" id="toggle-carb-breakdown" class="secondary-btn cluster-btn">Specify breakdown</button>
+                                <div id="carb-breakdown" class="carb-breakdown" style="display:none;">
+                                    <div class="carb-breakdown-header">Optional carbs breakdown</div>
+                                    <div class="carb-breakdown-fields">
+                                        <div><label>Sugar (g)<input type="number" step="any" name="sukkerarter" id="sukkerarter"></label></div>
+                                        <div class="carb-breakdown-note">Sugar should not exceed total carbs.</div>
+                                        <div id="carb-breakdown-warning" class="carb-breakdown-warning" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="energy-input-group">
+                            <label id="energy-label">Calories (kcal)<input type="number" step="any" id="energy-input" name="energi_kcal"></label>
+                            <button type="button" id="toggle-energy-unit" class="secondary-btn cluster-btn" style="margin-top: 4px;">Switch to kJ</button>
+                        </div>
+                        <div><label>Fiber (g)<input type="number" step="any" name="kostfiber" id="kostfiber"></label></div>
+                        <div><label>Protein (g)<input type="number" step="any" name="protein" id="protein"></label></div>
+                    <div><label>Salt (g)<input type="number" step="any" name="salt" id="salt"></label></div>
+                </div>
+            </fieldset>
+            </div>
+            <!-- End of My Product Section -->
+            
+            <!-- Category Selection - visible in both modes -->
+            <div class="category-selection-section">
+                <div class="section-header">
+                    <h2 class="section-title" id="category-section-title">Select Categories</h2>
+                    {% if current_user.is_authenticated and current_user.is_subscribed() %}
+                    <div class="saved-searches-dropdown dropdown" style="display: none;">
+                        <button type="button" class="dropdown-btn" id="saved-searches-dropdown-btn-explore">💾 Saved Searches ▾</button>
+                        <div class="dropdown-content" id="saved-searches-dropdown-explore">
+                            <div class="dropdown-loading">Loading...</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <div id="category-selectors"></div>
+                </div>
+                <div id="selected-categories"></div>
+                <button type="button" id="find-products" class="find-products-btn">Find Products</button>
+            </div>
+        </form>
+        <div id="comparison-table"></div>
+    </div>
+    
+    <!-- Nutrition Text Parser Modal -->
+    <div id="nutrition-paste-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Extract Nutrition Information</h3>
+                <button type="button" class="modal-close">&times;</button>
+            </div>
+            
+            <!-- Mode Tabs -->
+            <div class="modal-tabs">
+                <button type="button" class="modal-tab active" data-mode="text">📝 Paste Text</button>
+                <button type="button" class="modal-tab" data-mode="photo">📷 Upload Photo</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Text Mode -->
+                <div id="text-mode" class="input-mode active">
+                    <p>Paste text from a nutrition label (e.g., from a product website). The parser will extract nutrition values automatically.</p>
+                    <textarea id="nutrition-paste-textarea" rows="15" placeholder="Example:
+Energy: 2209 kJ / 527 kcal
+Fat: 33g
+  - of which saturates: 3g
+Carbohydrate: 52g
+  - of which sugars: 2.9g
+Fibre: 2.4g
+Protein: 5g
+Salt: 1.4g"></textarea>
+                </div>
+                
+                <!-- Photo Mode -->
+                <div id="photo-mode" class="input-mode">
+                    <p>Upload a photo of a nutrition label. We'll use OCR to extract the text automatically.</p>
+                    
+                    <div class="file-upload-area">
+                        <input type="file" id="nutrition-photo-input" accept="image/*" style="display: none;">
+                        <button type="button" id="select-photo-btn" class="file-upload-btn">
+                            📁 Choose Image
+                        </button>
+                        <div class="file-upload-hint">or drag and drop</div>
+                    </div>
+                    
+                    <div id="photo-preview-area" style="display: none;">
+                        <img id="photo-preview" src="" alt="Preview">
+                        <div class="photo-info">
+                            <span id="photo-filename"></span>
+                            <button type="button" id="remove-photo-btn" class="remove-photo-btn">✕ Remove</button>
+                        </div>
+                    </div>
+                    
+                    <div id="ocr-status" class="ocr-status" style="display: none;">
+                        <div class="ocr-spinner"></div>
+                        <span>Extracting text from image...</span>
+                    </div>
+                    
+                    <div id="ocr-result" class="ocr-result" style="display: none;">
+                        <h4>Extracted Text:</h4>
+                        <textarea id="ocr-extracted-text" rows="12" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" id="parse-nutrition-btn" class="primary-btn">Parse & Fill Form</button>
+                <button type="button" class="secondary-btn modal-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/main.js"></script>
+</body>
+</html>

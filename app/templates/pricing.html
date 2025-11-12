@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - Product Comparator</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .pricing-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .pricing-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-header p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .pricing-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #667eea;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2a2a4a;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 1rem 0;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 2rem 0;
+        }
+
+        .plan-features li {
+            padding: 0.75rem 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .plan-features li.unavailable {
+            color: #999;
+        }
+
+        .plan-features li.unavailable::before {
+            content: '✗';
+            color: #999;
+        }
+
+        .plan-cta {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .plan-cta.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .plan-cta.primary:hover {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .plan-cta.secondary {
+            background: #f0f0f5;
+            color: #666;
+        }
+
+        .plan-cta.secondary:hover {
+            background: #e0e0eb;
+        }
+
+        .plan-cta:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .current-plan {
+            background: #4caf50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .faq-section {
+            max-width: 800px;
+            margin: 4rem auto;
+        }
+
+        .faq-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #2a2a4a;
+            margin-bottom: 2rem;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-question {
+            font-weight: bold;
+            color: #2a2a4a;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-answer {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                {% if current_user.is_authenticated %}
+                    <div class="user-account-info">
+                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        {% if current_user.is_subscribed() %}
+                            <span class="badge-premium">Premium</span>
+                        {% else %}
+                            <span class="badge-free">Free</span>
+                        {% endif %}
+                    </div>
+                    <div class="user-actions">
+                        <a href="{{ url_for('profile_page') }}" class="profile-link">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="user-actions">
+                        <a href="{{ url_for('login') }}" class="auth-link">Login</a>
+                        <a href="{{ url_for('register') }}" class="auth-link">Register</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="pricing-container">
+        <div class="pricing-header">
+            <h1>Choose Your Plan</h1>
+            <p>Unlock powerful features to supercharge your product comparisons</p>
+        </div>
+
+        <div class="pricing-plans">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="plan-name">Free</div>
+                <div class="plan-price">$0<span>/month</span></div>
+                
+                {% if current_user.is_authenticated and not current_user.is_subscribed() %}
+                <span class="current-plan">Current Plan</span>
+                {% endif %}
+                
+                <ul class="plan-features">
+                    <li>1 comparison per day</li>
+                    <li>3 explore searches per day</li>
+                    <li class="unavailable">Save searches</li>
+                    <li class="unavailable">Unlimited comparisons</li>
+                    <li class="unavailable">Priority support</li>
+                </ul>
+                
+                {% if current_user.is_authenticated %}
+                    {% if not current_user.is_subscribed() %}
+                    <button class="plan-cta secondary" disabled>Current Plan</button>
+                    {% else %}
+                    <button class="plan-cta secondary" disabled>—</button>
+                    {% endif %}
+                {% else %}
+                <a href="{{ url_for('register') }}"><button class="plan-cta secondary">Get Started</button></a>
+                {% endif %}
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="pricing-card featured">
+                <div class="plan-name">Premium</div>
+                <div class="plan-price">$9.99<span>/month</span></div>
+                
+                {% if current_user.is_authenticated and current_user.is_subscribed() %}
+                <span class="current-plan">Current Plan</span>
+                {% endif %}
+                
+                <ul class="plan-features">
+                    <li>Unlimited comparisons</li>
+                    <li>Unlimited explore searches</li>
+                    <li>Save unlimited searches</li>
+                    <li>Advanced filtering & sorting</li>
+                    <li>Priority support</li>
+                    <li>Export to PDF & CSV</li>
+                </ul>
+                
+                {% if current_user.is_authenticated %}
+                    {% if current_user.is_subscribed() %}
+                    <button class="plan-cta primary" onclick="manageSubscription()">Manage Subscription</button>
+                    {% else %}
+                    <button class="plan-cta primary" onclick="upgradeNow()">Upgrade Now</button>
+                    {% endif %}
+                {% else %}
+                <a href="{{ url_for('register') }}"><button class="plan-cta primary">Get Started</button></a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">Can I cancel anytime?</div>
+                <div class="faq-answer">Yes! You can cancel your subscription at any time from your profile page. You'll continue to have access to premium features until the end of your billing period.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">What payment methods do you accept?</div>
+                <div class="faq-answer">We accept all major credit cards (Visa, Mastercard, American Express) through our secure payment processor, Stripe.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Will my saved searches be deleted if I downgrade?</div>
+                <div class="faq-answer">No, your saved searches will be preserved. However, you won't be able to create new saved searches or access existing ones until you upgrade again.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Is there a free trial?</div>
+                <div class="faq-answer">The free plan allows you to try the basic features. You can upgrade to Premium at any time to unlock all features.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function upgradeNow() {
+            try {
+                const response = await fetch('/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.checkout_url) {
+                    window.location.href = data.checkout_url;
+                } else {
+                    alert('Error creating checkout session. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating checkout session. Please try again.');
+            }
+        }
+
+        async function manageSubscription() {
+            try {
+                const response = await fetch('/create-portal-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.portal_url) {
+                    window.location.href = data.portal_url;
+                } else {
+                    alert('Error opening subscription management. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error opening subscription management. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

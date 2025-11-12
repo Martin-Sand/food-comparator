@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Product Comparator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                {% if current_user.is_authenticated %}
+                    <div class="user-account-info">
+                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        {% if current_user.is_subscribed() %}
+                            <span class="badge-premium">Premium</span>
+                        {% else %}
+                            <span class="badge-free">Free</span>
+                        {% endif %}
+                    </div>
+                    <div class="user-actions">
+                        {% if current_user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="auth-link">Admin</a>
+                        {% endif %}
+                        <a href="{{ url_for('profile_page') }}" class="auth-link active">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="user-actions">
+                        <a href="{{ url_for('login') }}" class="auth-link">Login</a>
+                        <a href="{{ url_for('register') }}" class="auth-link">Register</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    
+    <div class="container profile-container">
+        <h1>👤 Profile Settings</h1>
+        
+        <!-- Account Information Section -->
+        <section class="profile-section">
+            <h2>Account Information</h2>
+            <div class="profile-card">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-group">
+                        <input type="email" id="email" value="{{ current_user.email }}" placeholder="your@email.com">
+                        <button id="update-email-btn" class="btn btn-primary">Update Email</button>
+                    </div>
+                    <small class="help-text">Used for login and notifications</small>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="info-item">
+                        <span class="info-label">Account Created:</span>
+                        <span class="info-value">{{ current_user.created_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Type:</span>
+                        <span class="info-value">
+                            {% if current_user.is_subscribed() %}
+                                <span class="badge-premium">Premium</span>
+                            {% else %}
+                                <span class="badge-free">Free</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Password Section -->
+        <section class="profile-section">
+            <h2>Change Password</h2>
+            <div class="profile-card">
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" required minlength="6">
+                        <small class="help-text">Must be at least 6 characters</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password" required minlength="6">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </form>
+            </div>
+        </section>
+        
+        <!-- Subscription Section -->
+        <section class="profile-section">
+            <h2>Subscription & Billing</h2>
+            <div class="profile-card">
+                {% if current_user.is_subscribed() %}
+                    <div class="subscription-active">
+                        <h3>✓ Premium Subscription Active</h3>
+                        <div class="info-item">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value subscription-status">{{ current_user.subscription_status }}</span>
+                        </div>
+                        {% if current_user.subscription_end_date %}
+                        <div class="info-item">
+                            <span class="info-label">Next Billing Date:</span>
+                            <span class="info-value">{{ current_user.subscription_end_date.strftime('%B %d, %Y') }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="subscription-actions">
+                            <button class="btn btn-secondary" onclick="manageSubscription()">Manage Subscription</button>
+                            <small class="help-text">Cancel or update your payment method</small>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="subscription-free">
+                        <h3>Free Plan</h3>
+                        <p>You are currently on the free plan with limited features:</p>
+                        <ul class="feature-list">
+                            <li class="unavailable">1 comparison per day</li>
+                            <li class="unavailable">3 explore searches per day</li>
+                            <li class="unavailable">Cannot save searches</li>
+                        </ul>
+                        <p><strong>Upgrade to Premium for:</strong></p>
+                        <ul class="feature-list">
+                            <li>✓ Unlimited comparisons</li>
+                            <li>✓ Unlimited explore searches</li>
+                            <li>✓ Save unlimited searches</li>
+                            <li>✓ Priority support</li>
+                        </ul>
+                        <div class="subscription-actions">
+                            <a href="{{ url_for('pricing_page') }}" class="btn btn-premium">View Pricing Plans</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+        
+        <!-- Danger Zone -->
+        <section class="profile-section danger-zone">
+            <h2>Danger Zone</h2>
+            <div class="profile-card">
+                <p>Once you delete your account, there is no going back. This action will permanently delete all your saved searches and data.</p>
+                <button id="delete-account-btn" class="btn btn-danger" disabled>Delete Account (Coming Soon)</button>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Toast notification system
+        function showToast(message, type = 'info', duration = 5000) {
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || icons.info}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => {
+                    container.removeChild(toast);
+                    if (container.children.length === 0) {
+                        document.body.removeChild(container);
+                    }
+                }, 300);
+            }, duration);
+        }
+        
+        // Update email
+        document.getElementById('update-email-btn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email) {
+                showToast('Please enter an email address', 'error');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showToast('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/update_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Email updated successfully!', 'success');
+                } else {
+                    showToast(data.error || 'Failed to update email', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating email:', error);
+                showToast('Failed to update email', 'error');
+            }
+        });
+        
+        // Update password
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/update_password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Password updated successfully!', 'success');
+                    document.getElementById('password-form').reset();
+                } else {
+                    showToast(data.error || 'Failed to update password', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating password:', error);
+                showToast('Failed to update password', 'error');
+            }
+        });
+        
+        // Subscription management
+        async function manageSubscription() {
+            try {
+                const response = await fetch('/create-portal-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.portal_url) {
+                    window.location.href = data.portal_url;
+                } else {
+                    const errorMsg = data.error || 'Error opening subscription management';
+                    console.error('Portal error:', errorMsg);
+                    showToast(errorMsg, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error opening subscription management', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

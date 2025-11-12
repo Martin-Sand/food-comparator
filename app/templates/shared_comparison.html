@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Product Comparison</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                <div class="user-actions">
+                    <a href="{{ url_for('login') }}" class="auth-link">Login</a>
+                    <a href="{{ url_for('register') }}" class="auth-link">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Shared Comparison Banner -->
+    <div class="shared-banner">
+        <div class="shared-banner-content">
+            <span class="shared-icon">🔗</span>
+            <div class="shared-info">
+                <strong>Shared Comparison</strong>
+                <span class="shared-meta">
+                    Shared by {{ owner_email }} • {{ created_at.strftime('%B %d, %Y') }}
+                    {% if view_count > 1 %} • {{ view_count }} views{% endif %}
+                </span>
+            </div>
+            <a href="{{ url_for('register') }}" class="btn-create-account">Create Free Account</a>
+        </div>
+    </div>
+    
+    <div class="comparison-container">
+        <header class="comparison-header">
+            <h1>Product Comparison</h1>
+            <section id="categories-section" class="collapsible-section">
+                <div class="section-header collapsible-header" id="categories-header">
+                    <h2>📁 Selected Categories</h2>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div id="selected-categories-display" class="section-content categories-content"></div>
+            </section>
+            <section id="category-summary-section" class="collapsible-section" style="display:none;">
+                <div class="section-header collapsible-header" id="summary-header">
+                    <h2>Summary</h2>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div id="category-summary" class="section-content"></div>
+            </section>
+            <section id="my-product-section" class="collapsible-section" style="display:none;">
+                <div class="section-header collapsible-header" id="my-product-header">
+                    <h2>My Product</h2>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div id="my-product-info" class="section-content"></div>
+            </section>
+            <div class="filter-controls">
+                <div class="search-filter">
+                    <input type="text" id="product-search" placeholder="Search products...">
+                </div>
+                <div class="sort-controls">
+                    <select id="sort-by">
+                        <option value="price_asc">Price (Low to High)</option>
+                        <option value="price_desc">Price (High to Low)</option>
+                        <option value="unit_price_asc">Unit Price (Low to High)</option>
+                        <option value="unit_price_desc">Unit Price (High to Low)</option>
+                        <option value="name_asc">Name (A to Z)</option>
+                        <option value="name_desc">Name (Z to A)</option>
+                    </select>
+                </div>
+                <div class="toggle-controls">
+                    <button id="toggle-nutrition" class="filter-toggle">📊 Nutrition</button>
+                    <button id="toggle-allergens" class="filter-toggle">⚠️ Allergens</button>
+                    <button id="toggle-charts" class="filter-toggle">📈 Charts</button>
+                </div>
+                <div class="checkbox-filters">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="hide-no-nutrition">
+                        Hide products without nutrition
+                    </label>
+                </div>
+            </div>
+        </header>
+        <main class="comparison-grid" id="product-grid">
+            <!-- Products will be inserted here -->
+        </main>
+    </div>
+    
+    <script>
+        // Inject comparison data into the page as window properties
+        window.productsData = {{ comparison_data | tojson }};
+        window.userProduct = window.productsData ? window.productsData.user_product : null;
+        window.isPublicView = true; // Flag to disable certain features
+    </script>
+    <script src="/static/comparison.js"></script>
+</body>
+</html>

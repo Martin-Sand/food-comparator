@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 4rem auto;
+            padding: 3rem;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-container h1 {
+            color: #4caf50;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-container p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .success-features {
+            background: #f8f8ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .success-features h3 {
+            color: #2a2a4a;
+            margin-bottom: 1rem;
+        }
+
+        .success-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .success-features li {
+            padding: 0.5rem 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+
+        .success-features li::before {
+            content: '✓';
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .action-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.secondary {
+            background: #f0f0f5;
+            color: #666;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e0e0eb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                {% if current_user.is_authenticated %}
+                    <div class="user-account-info">
+                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        <span class="badge-premium">Premium</span>
+                    </div>
+                    <div class="user-actions">
+                        <a href="{{ url_for('profile_page') }}" class="profile-link">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="success-container">
+        <div class="success-icon">🎉</div>
+        <h1>Welcome to Premium!</h1>
+        <p>Your payment was successful. You now have access to all premium features.</p>
+
+        <div class="success-features">
+            <h3>What's Unlocked:</h3>
+            <ul>
+                <li>Unlimited product comparisons</li>
+                <li>Unlimited explore searches</li>
+                <li>Save unlimited searches</li>
+                <li>Advanced filtering & sorting</li>
+                <li>Priority support</li>
+            </ul>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('index') }}" class="action-btn primary">Start Comparing</a>
+            <a href="{{ url_for('profile_page') }}" class="action-btn secondary">View Profile</a>
+        </div>
+    </div>
+</body>
+</html>

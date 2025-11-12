@@ -1,0 +1,1479 @@
+id,parent_id,name,is_active
+1,,Frukt & grønt,True
+2,1,Frukt,True
+3,2,Sitrusfrukt,True
+4,,Middagstilbehør,True
+5,4,Sauser,True
+6,5,Brun saus,True
+7,2,Bananer,True
+8,,Meieri & egg,True
+9,8,Plantebasert drikke,True
+10,9,Havredrikk,True
+11,1,Grønnsaker,True
+12,11,Kål,True
+13,,Pålegg & frokost,True
+14,13,Kjøttpålegg,True
+15,14,Saltpølser,True
+16,,Barneprodukter,True
+17,16,Babypleie,False
+18,17,Våtservietter,False
+19,,Ost,True
+20,19,Chevre,True
+21,11,Rotgrønnsaker,True
+22,,Bakeri,True
+23,22,Brød,True
+24,2,Pære,True
+25,16,Barnedessert,True
+26,,Drikke,True
+27,26,Smoothie,True
+28,26,Juice,True
+29,11,Løk,True
+30,26,Brus,True
+31,1,Poteter,True
+32,31,Poteter,True
+33,,Middag,True
+34,33,Nudler,True
+35,2,Epler,True
+36,22,Rundstykker og småbrød,True
+37,13,Frokostblandinger og musli,True
+38,36,Rundstykker,True
+39,37,Granola,True
+40,19,Hvitmuggost,True
+41,19,Smøreoster,True
+42,41,Kremost,True
+43,,Kjøtt,True
+44,43,Medisterkaker,True
+45,11,Paprika,True
+46,,Kylling og fjærkre,True
+47,46,Kylling,True
+48,47,Kyllinglår,True
+49,26,Vann,True
+50,49,Vann med kullsyre,True
+51,,Hus & hjem,False
+52,51,Klesvask,False
+53,52,Vaskemiddel,False
+54,19,Parmesan og smaksrike fastoster,True
+55,11,Salater,True
+56,36,Baguetter,True
+57,4,Dressinger,True
+58,57,Rømmedressing,True
+59,19,Brunost,True
+60,,Snacks & godteri,True
+61,60,Nøtter,True
+62,61,Chilinøtter,True
+63,43,Pølser,True
+64,63,Middagspølse,True
+65,4,Hermetisk grønt,True
+66,65,Hermetiske tomater,True
+67,4,Linser og frø,True
+68,67,Frø,True
+69,26,Kombucha,True
+70,33,Ferdigmåltider,True
+71,70,Pannekaker,True
+72,,Bakevarer og kjeks,True
+73,60,Sjokolade,True
+74,72,Baking,True
+75,74,Maisstivelse,True
+76,61,Peanøtter,True
+77,33,Potetretter,True
+78,77,Pommes frites,True
+79,8,Yoghurt,True
+80,79,Yoghurt,True
+81,16,Barnemat,True
+82,22,Boller og småkaker,True
+83,82,Lapper,True
+84,33,Fiskeretter,True
+85,84,Hermetisk fisk og sjømat,True
+86,5,Pesto,True
+87,22,Pitabrød,True
+88,26,Øl,True
+89,88,Alkoholfritt øl,True
+90,11,Agurk,True
+91,33,Pizza,True
+92,91,Pizza,True
+93,72,Kjeks,True
+94,93,Smørbrødkjeks,True
+95,51,"Poser, papir og folie",False
+96,13,Fiskepålegg,True
+97,95,Brødposer,False
+98,96,Sild/ansjos,True
+99,8,Smør og margarin,True
+100,99,Margarin,True
+101,95,Fryseposer,False
+102,70,Fiskemåltid ferdig,True
+103,41,Smøreost,True
+104,82,Vafler ferdigstekt,True
+105,,Fisk & skalldyr,True
+106,105,Fisk,True
+107,26,Kaffe,True
+108,106,Laks,True
+109,107,Instant kaffe,True
+110,5,Ostesaus,True
+111,26,Energidrikk,True
+112,82,Boller,True
+113,13,Postei og pate,True
+114,113,Kyllingpostei,True
+115,33,Ris,True
+116,115,Couscous,True
+117,93,Cookies,True
+118,,Personlige artikler,False
+119,118,Tannpleie,False
+120,22,Loff,True
+121,119,Tanntråd,False
+122,72,Mel og gryn,True
+123,122,Mel,True
+124,16,Barnegrøt,True
+125,61,Nøtteblanding,True
+126,14,Påleggskinker,True
+127,119,Tannbørste,False
+128,33,Grøt,True
+129,128,Havregrøt,True
+130,33,Taco,True
+131,130,Tacoskjell,True
+132,33,Middag kit,True
+133,132,Gryterett kit,True
+134,33,Supper,True
+135,134,Blomkålsuppe,True
+136,134,Kyllingsuppe,True
+137,22,Knekkebrød,True
+138,107,Filtermalt kaffe,True
+139,72,Tørket frukt og nøtter,True
+140,139,Rosiner,True
+141,2,Avocado,True
+142,33,Pasta,True
+143,142,Spagetti,True
+144,82,Muffins,True
+145,19,Revet ost,True
+146,33,Middagshermetikk,True
+147,8,Egg,True
+148,134,Grønnsaksuppe,True
+149,11,Tomater,True
+150,4,Salt og pepper,True
+151,150,Salt,True
+152,8,Rømme,True
+153,4,Kraft og buljong,True
+154,153,Buljong,True
+155,142,Pastarør,True
+156,22,Kaker,True
+157,156,Ostekake,True
+158,77,Potetmos,True
+159,1,Bær,True
+160,159,Rips,True
+161,107,Kaffefilter,True
+162,60,Pastiller,True
+163,11,Sukkererter,True
+164,,Dessert,True
+165,164,Smådesserter,True
+166,60,Snacks,True
+167,166,Saltstenger,True
+168,43,Kjøttdeig og farse,True
+169,168,Kjøttdeig,True
+170,96,Kaviar,True
+171,51,Grill og ild,False
+172,171,Fyrstikker,False
+173,43,Svinekjøtt,True
+174,173,Svinekoteletter,True
+175,5,Hummus,True
+176,4,Middagssalat,True
+177,8,Melk,True
+178,57,Øvrig dressing,True
+179,177,Lettmelk,True
+180,166,Chips,True
+181,84,Fiskegrateng,True
+182,106,Torsk,True
+183,11,Chili,True
+184,14,Sylte,True
+185,57,Tzatziki,True
+186,63,Spesialpølser,True
+187,96,Makrell i tomat,True
+188,106,Makrell,True
+189,5,Bearnaisesaus,True
+190,168,Karbonadedeig,True
+191,19,Manchego,True
+192,49,Vann med smak,True
+193,159,Bringebær,True
+194,60,Godteri,True
+195,22,Tørt brød,True
+196,195,Flatbrød,True
+197,43,Hamburger,True
+198,14,Fleskepølse,True
+199,51,Renhold,False
+200,177,Syrnet melk smakstilsatt,True
+201,199,Oppvaskmiddel,False
+202,31,Søtpotet,True
+203,37,Havregryn,True
+204,11,Stangselleri,True
+205,4,Deiger og rører,True
+206,205,Pizzabunn,True
+207,61,Pistasjenøtter,True
+208,26,Saft,True
+209,105,Skalldyr,True
+210,209,Skjell,True
+211,164,Dessertpuddinger,True
+212,211,Karamellpudding,True
+213,106,Lutefisk,True
+214,88,Øl,True
+215,2,Druer,True
+216,105,Sushi,True
+217,130,Tacokryddermix,True
+218,142,Makaroni,True
+219,209,Scampi,True
+220,65,Tomatpure,True
+221,,Kioskvarer,False
+222,221,Lesestoff,False
+223,222,Aviser,False
+224,19,Fetaost,True
+225,156,Brownie,True
+226,8,Fløte,True
+227,226,Kremfløte,True
+228,13,Remulade,True
+229,209,Reker,True
+230,99,Smør,True
+231,128,Risgrøt,True
+232,2,Ananas,True
+233,159,Physalis,True
+234,70,Lasagne ferdig,True
+236,139,Mandler,True
+237,168,Kjøttfarse,True
+238,13,Spekemat,True
+239,16,Barnekjeks,True
+240,238,Spekeskinker,True
+241,199,Avfallssekker,False
+242,171,Tennbriketter,False
+243,142,Pasta fylt,True
+244,82,Kanelbakst,True
+245,19,Mozzarella,True
+246,60,Dip,True
+247,22,Hamburgerbrød,True
+248,246,Dipmix,True
+249,4,Krydder,True
+250,249,Laurbærblader,True
+251,93,Søtkjeks,True
+252,5,Peppersaus,True
+253,142,Pastaskruer,True
+254,47,Kylling hel,True
+255,118,Apotekvarer,False
+256,255,Plaster,False
+257,249,Rosmarin tørket,True
+258,164,Riskrem,True
+259,41,Prim,True
+260,130,Guacamole,True
+261,113,Baconpostei,True
+262,130,Tortillalefser,True
+263,164,Fruktkompott,True
+264,156,Julekaker,True
+265,65,Oliven,True
+266,79,Matyoghurt,True
+267,67,Linser,True
+268,2,Kiwi,True
+269,70,Ferdigmåltid,True
+270,84,Fiskekaker,True
+271,19,Cheddar,True
+272,139,Svisker,True
+273,142,Pastaskjell,True
+274,130,Tortillachips,True
+275,249,Hvitløkspulver,True
+276,4,Stuinger,True
+277,276,Ertestuing,True
+278,74,Kokesjokolade,True
+279,164,Hermetisk frukt og bær,True
+280,279,Hermetisk ananas,True
+281,119,Tannkrem,False
+282,60,Tyggegummi,True
+283,46,And,True
+284,283,And,True
+285,156,Kransekake,True
+286,95,Isbitposer,False
+287,156,Sjokoladekake,True
+288,57,Kebabdressing,True
+289,43,Viltkjøtt,True
+290,51,Kjøkken,False
+291,60,Popcorn,True
+292,289,Reinsdyr,True
+293,290,Bakeutstyr,False
+294,5,Pastasaus,True
+295,63,Grillpølser,True
+296,5,Sennepssaus,True
+297,199,Rengjøringsmiddel,False
+298,177,Jordbærmelk,True
+299,177,Helmelk,True
+300,1,Frosne bær og grønnsaker,True
+301,300,"Grønnsaker, frosne",True
+302,8,Creme Fraiche,True
+303,22,Påsmurte baguetter,True
+304,164,Mousse,True
+305,43,Lammekjøtt,True
+306,304,Sjokolademousse,True
+307,305,Lammekoteletter,True
+308,1,Krydderurter,True
+309,308,Persille,True
+310,13,Søtpålegg,True
+311,310,Honning,True
+312,70,Lungemos,True
+313,,Dyr,True
+314,313,Kattemat,True
+315,159,Jordbær,True
+316,118,Helsekost,False
+317,316,Måltidsbar,False
+318,1,Sopp,True
+319,318,Sopp,True
+320,13,Energibar,True
+321,130,Tacosaus,True
+322,19,Kittmodnetost,True
+323,199,Vaskeredskaper,False
+324,249,Gurkemeie,True
+325,49,Vann,True
+326,65,Hermetiske erter,True
+327,63,Wienerpølser,True
+328,199,Toalettpapir,False
+329,57,Hamburgerdressing,True
+330,11,Asparges,True
+331,159,Blåbær,True
+332,118,Hudpleie,False
+333,332,Leppepomade,False
+334,4,Ketchup og sennep,True
+335,221,Snus,False
+336,334,Sprøstekt løk,True
+337,134,Tomatsuppe,True
+338,199,WC-rens,False
+339,164,Gele,True
+340,65,Hermetisk mais,True
+341,4,Matoljer,True
+342,26,Iskaffe,True
+343,341,Rapsolje,True
+344,334,Sennep,True
+345,36,Ciabatta,True
+346,118,Personlig hygiene,False
+347,346,Såper,False
+348,13,Majones,True
+349,13,Bacon,True
+350,26,Kaffekapsler,True
+351,173,Svinekjøtt strimlet,True
+352,249,Muskat,True
+353,156,Marsipankake,True
+354,47,Kyllingfilet,True
+355,150,Pepper,True
+356,305,Lammelår,True
+357,106,Ørret,True
+358,300,"Frukt og bær, frosne",True
+359,316,Tran,False
+360,134,Fiskesuppe,True
+361,95,Bakepapir,False
+362,142,Pastafigurer,True
+363,173,Smårettskinke,True
+364,171,Lighter,False
+365,166,Baconsnacks,True
+366,22,Pølsebrød,True
+367,52,Tøymykner,False
+368,308,Gressløk,True
+369,209,Kreps,True
+370,113,Leverpostei,True
+371,5,Asiatiske sauser,True
+372,199,Kluter,False
+373,4,Kokosmelk,True
+374,84,Panert fisk,True
+375,346,Intimvask,False
+376,13,Påleggsalat,True
+377,4,Potetsalat,True
+378,118,Barbering,False
+379,378,Barberpleie,False
+380,164,Dessertsauser,True
+381,380,Jordbærsaus,True
+382,26,Leskedrikk,True
+383,156,Donuts,True
+384,26,Iste,True
+385,72,Gjær,True
+386,177,Sjokolademelk,True
+387,84,Surimi,True
+388,70,Pytt i panne,True
+389,134,Spinatsuppe,True
+390,2,Fruktmiks,True
+391,156,Havreflarn,True
+392,43,Storfekjøtt,True
+393,392,Biffstrimler,True
+394,11,Bønner ferske,True
+395,70,Pastarett ferdig,True
+396,46,Kalkun,True
+397,118,Bind og tamponger,False
+398,397,Bind,False
+399,82,Wienerbakst,True
+400,199,Grønnsåpe,False
+401,238,Spekepølser,True
+402,22,Riskaker,True
+403,164,Is,True
+404,403,Dessertis,True
+405,14,Roastbiff,True
+406,134,Ertesuppe,True
+407,106,Tunfisk,True
+408,290,Tørkerull,False
+409,346,Bomullspinner,False
+410,156,Minibakkels,True
+411,99,Kryddersmør,True
+412,70,Løkringer,True
+413,13,Syltetøy,True
+414,2,Granatepler,True
+415,72,Bakemixer,True
+416,415,Rundstykkemix,True
+417,246,Cheddar dip,True
+418,310,Peanøttsmør,True
+419,37,Frokostblanding,True
+420,65,Surkål,True
+421,153,Sukkerkulør,True
+422,392,Mørbrad,True
+423,5,Pizzasaus,True
+424,22,Lomper,True
+425,22,Påsmurte lefser,True
+426,221,Tobakk,False
+427,341,Olivenolje,True
+428,199,Vindusvask,False
+429,106,Lysing,True
+430,177,Skummet melk,True
+431,65,Bambusskudd,True
+432,19,Guloster,True
+433,432,Gulost,True
+434,134,Kjøttsuppe,True
+435,43,Lunsjkaker,True
+436,205,Paideig,True
+437,51,Borddekning,False
+438,437,Stearinlys,False
+439,2,Mango,True
+440,392,Entrecote,True
+441,255,Selvtester,False
+442,156,Mandelkake,True
+443,397,Truseinnlegg,False
+444,177,Syrnet melk naturell,True
+445,65,Jalapenos,True
+446,341,Matolje,True
+447,65,Sylteagurk,True
+448,84,Fiskepudding,True
+449,332,Sminkefjerner,False
+450,106,Kveite,True
+451,334,Ketchup,True
+452,22,Lefser,True
+453,209,Krabbe,True
+454,177,Kefir,True
+455,255,Smertestillende,False
+456,43,Kjøttboller,True
+457,392,Indrefilet av storfe,True
+458,61,Cashewnøtter,True
+459,5,Kyllingsaus,True
+460,22,Myke runde porsjonsbrød,True
+461,9,Nøttedrikk,True
+462,65,Hermetiske rødbeter,True
+463,168,Kyllingkjøttdeig,True
+464,313,Dyreartikler,False
+465,464,Hundeavfallsposer,False
+466,74,Bakepulver,True
+467,403,Småis multipack,True
+468,156,Napoleonskake,True
+469,308,Rosmarin,True
+470,222,Blader,False
+471,308,Dill,True
+472,84,Fiskepinner,True
+473,134,Gulrotsuppe,True
+474,313,Hundemat,True
+475,70,Panert kjøtt,True
+476,142,Båndspagetti,True
+477,308,Sitrongress,True
+478,332,Vaselin,False
+479,33,Vegetarretter,True
+480,106,Steinbit,True
+481,106,Hyse,True
+482,95,Stekepose,False
+483,308,Basilikum,True
+484,5,Chilisaus,True
+485,166,Ostesnacks,True
+486,308,Koriander,True
+487,5,Worcestersaus,True
+488,77,Kokt potet,True
+489,249,Timian tørket,True
+490,156,Biskvi,True
+491,14,Rullader,True
+492,173,Skinkestek,True
+493,26,Sjokoladedrikk,True
+494,415,Brødmix,True
+495,164,Isbiter,True
+496,2,Melon,True
+497,26,Te,True
+498,70,Pai ferdig,True
+499,392,Ytrefilet av storfe,True
+500,130,Mangosalsa,True
+501,226,Matfløte,True
+502,118,Neglepleie,False
+503,502,Neglelakkfjerner,False
+504,249,Kryddermix,True
+505,346,Bomullpads,False
+506,8,Cottage Cheese,True
+507,249,Karve,True
+508,43,Karbonader,True
+509,168,Svinekjøttdeig,True
+510,346,Intimservietter,False
+511,9,Soyadrikk,True
+512,70,Gryterett ferdig,True
+513,4,Sushitilbehør,True
+514,139,Hasselnøtter,True
+515,513,Ingefær syltet,True
+516,72,Sukker,True
+517,119,Munnskyll,False
+518,57,Cæsardressing,True
+519,88,Lettøl,True
+520,74,Vaniljesukker,True
+521,65,Rødløk syltet,True
+522,415,Sjokoladekakemix,True
+523,346,Deodorant,False
+524,36,Hvitløksbaguetter,True
+525,166,Beef jerky,True
+526,173,Smårettbacon,True
+527,37,Kornblanding,True
+528,51,Hus,False
+529,528,Elektrisk,False
+530,134,Sodd,True
+531,164,Tiramisu,True
+532,397,Tamponger,False
+533,26,Cider,True
+534,533,Cider,True
+535,119,Fluortabletter,False
+536,341,Solsikkeolje,True
+537,173,Øvrig svinekjøtt,True
+538,4,Marinader og BBQ-saus,True
+539,538,Barbequesaus,True
+540,82,Croissant,True
+541,249,Grillkrydder,True
+542,332,Bodylotion,False
+543,134,Thaisuppe,True
+544,134,Soppsuppe,True
+545,107,Hele kaffebønner,True
+546,65,Hermetiske bønner,True
+547,82,Skillingsboller,True
+548,84,Fylt fisk,True
+549,5,Paprikasaus,True
+550,77,Søtpotetmos,True
+551,82,Berlinerboller,True
+552,279,Hermetisk fersken,True
+553,5,Sandefjordsmør,True
+554,82,Skolebrød,True
+555,432,Racletteost,True
+556,57,Aioli,True
+557,11,Squash,True
+558,65,Hermetisk asparges,True
+559,132,Middag kit,True
+560,82,Solskinnsboller,True
+561,249,Allehånde,True
+562,61,Pecannøtter,True
+563,211,Sjokoladepudding,True
+564,130,Tacokit,True
+565,173,Svineknoke,True
+566,5,Tahinisaus,True
+567,464,Kattesand,False
+568,65,Vannkastanjer,True
+569,36,Focaccia,True
+570,63,Servelatsnabb,True
+571,77,Gratinerte poteter,True
+572,139,Aprikoser tørket,True
+573,74,Natron,True
+574,70,Dumpling,True
+575,118,Hårpleie,False
+576,575,Balsam,False
+577,249,Basilikum tørket,True
+578,5,Hollandaisesaus,True
+579,19,Plantebasert erstatning for ost,True
+580,575,Shampo,False
+581,5,Fiskesaus,True
+582,290,Oppbevaring,False
+583,134,Ramensuppe,True
+584,82,Brioche,True
+585,77,Skrelte poteter,True
+586,115,Quinoa,True
+587,65,Tomatbønner,True
+588,199,Kjøkkenhåndkle,False
+589,95,Plastfolie,False
+590,156,Rullekake,True
+591,65,Rødkål,True
+592,47,Kylling stekt,True
+593,575,Hårgele,False
+594,249,Paprikapulver,True
+595,246,Salsa dip,True
+596,95,Aluminiumsfolie,False
+597,119,Tannstikker,False
+598,8,Kesam,True
+599,132,Pastarett kit,True
+600,415,Muffinmix,True
+601,36,Bagel,True
+602,173,Ribbe,True
+603,308,Sitronmelisse,True
+604,65,Hermetisk sopp,True
+605,139,Dadler tørket,True
+606,115,Ris,True
+607,16,Babyartikler,False
+608,607,Smokker,False
+609,249,Gressløk tørket,True
+610,70,Vårruller,True
+611,4,Eddiker,True
+612,611,Balsamico,True
+613,2,Pasjonsfrukt,True
+614,11,Fennikel,True
+615,380,Vaniljesaus,True
+616,308,Mynte,True
+617,611,Eddik,True
+618,156,Punchrull,True
+619,5,Appelsinsaus,True
+620,77,Raspeball,True
+621,316,Kosttilskudd,False
+622,47,Kyllingvinger,True
+623,61,Valnøtter,True
+624,209,Hummer,True
+625,221,Sigaretter,False
+626,173,Svinefilet,True
+627,308,Timian,True
+628,65,Soltørkede tomater,True
+629,122,Potetmel,True
+630,313,Fuglemat,True
+631,106,Breiflabb,True
+634,115,Risottoris,True
+636,122,Paneringsmel,True
+639,308,Salvie,True
+640,5,Rødvinssaus,True
+641,82,Sjokoboller,True
+645,437,Servietter,False
+646,310,Sjokoladepålegg,True
+648,139,Kokosmasse,True
+649,122,Mandelmel,True
+652,308,Oregano,True
+659,115,Bulgur,True
+660,437,Engangservice,False
+661,226,Kaffefløte,True
+662,195,Grissini,True
+667,142,Lasagneplater,True
+671,65,Hermetisk grønnsaksmix,True
+674,415,Vaffelrøremix,True
+678,70,Kinesiske pannekaker,True
+679,132,Lasagne kit,True
+681,226,Kremtopping,True
+683,403,Iskake,True
+684,249,Oregano tørket,True
+687,392,Storfetunge,True
+690,95,Matpapir,False
+693,96,Rogn,True
+695,249,Kardemomme,True
+698,255,Røykeslutt,False
+699,11,Spirer,True
+700,5,Tapenade,True
+701,106,Sei,True
+702,19,Ricotta,True
+706,134,Aspargessuppe,True
+707,249,Spisskummen,True
+708,105,Rakfisk,True
+709,65,Hermetisk chili,True
+711,226,Havrefløte,True
+714,74,Melis,True
+719,105,Tørket fisk,True
+720,719,Klippfisk,True
+722,65,Hvitløk i marinade,True
+724,74,Søtningsstoff,True
+726,19,Ostefat,True
+728,5,Hvit saus,True
+729,2,Fiken,True
+730,16,Bleier,False
+731,74,Kakepynt,True
+732,70,Taco ferdig,True
+733,346,Papirlommetørkler,False
+734,43,Løvstek,True
+735,128,Rømmegrøt,True
+739,74,Marsipan,True
+740,74,Marengstopper,True
+741,255,Nesespray,False
+742,607,Tåteflaske,False
+743,502,Neglelakk,False
+744,156,Øvrige kaker,True
+745,51,Klær,False
+746,745,Sokker,False
+748,745,Undertøy,False
+749,82,Kokosboller,True
+750,211,Creme brulee,True
+751,139,Gojibær tørket,True
+752,107,Espressomalt kaffe,True
+753,5,Øvrig saus,True
+755,249,Nellik,True
+758,199,Klor,False
+759,279,Hermetisk fruktmix,True
+763,5,Soppsaus,True
+766,403,Småis,True
+767,22,Nanbrød,True
+768,17,Babyshampo,False
+769,173,Svinekjøtt revet,True
+771,134,Betasuppe,True
+772,607,Barnebestikk,False
+775,290,Kjøkkenmaskiner,False
+780,316,Trankapsler,False
+784,290,Stek og kok,False
+787,392,Høyrygg storfe,True
+789,249,Aromat,True
+791,84,Fiskeboller,True
+792,195,Minitoast,True
+793,305,Smalahove,True
+796,99,Matfett,True
+801,106,Dorade,True
+804,380,Sjokoladesaus,True
+810,575,Hårspray,False
+812,249,Vaniljestang,True
+813,41,Mascarpone,True
+819,79,Drikkeyoghurt,True
+820,106,Sild,True
+821,238,Fenalår,True
+822,249,Løkpulver,True
+823,279,Hermetisk mandarin,True
+830,177,Vaniljemelk,True
+832,5,Fløtesaus,True
+839,74,Essens,True
+841,51,Kontorrekvisita,False
+842,134,Szechuansuppe,True
+843,841,Tape,False
+846,305,Lammestek,True
+851,195,Krustander,True
+859,93,Vaffelkjeks,True
+862,61,Pinjekjerner,True
+866,82,Makroner,True
+867,195,Krutonger,True
+868,113,Andelever,True
+869,139,Mango tørket,True
+873,168,Lammedeig,True
+874,156,Terte,True
+875,19,Halloumi,True
+878,841,Skrivebok,False
+879,164,Dessertsuppe,True
+880,139,Tranebær tørket,True
+881,249,Kayennepepper,True
+889,57,Selskapsdressing,True
+890,415,Pannekakemix,True
+893,841,Gummistrikk,False
+894,63,Smårettpølser,True
+895,745,Skopleie,False
+899,84,Fiskewok,True
+900,380,Karamellsaus,True
+906,841,Konvolutter,False
+907,378,Barberblader,False
+908,249,Chilipulver,True
+912,171,Peiskubbe,False
+914,255,Desinfeksjon,False
+915,249,Kyllingkrydder,True
+916,132,Asiatisk kit,True
+918,74,Hornsalt,True
+923,841,Lim,False
+924,249,Provencekrydder,True
+925,341,Sesamolje,True
+926,378,Barberhøvel,False
+927,719,Tørrfisksnacks,True
+928,47,Kyllingburger,True
+929,132,Hamburger kit,True
+930,113,Grønnsakspostei,True
+931,249,Karripulver,True
+932,118,Sminke,False
+933,932,Leppestift,False
+934,107,Presskannemalt kaffe,True
+938,16,Morsmelkerstatning,True
+941,74,Sirup,True
+942,74,Konservering,True
+944,26,Toddy,True
+949,57,Ranchdressing,True
+950,51,Sesong og fest,False
+951,950,Selskapsartikler,False
+953,380,Bringebærsaus,True
+954,841,Saks,False
+957,950,Kakelys,False
+959,47,Øvrig kylling,True
+961,249,Garam Masala,True
+963,84,Bacalao,True
+965,156,Havreterninger,True
+966,249,Sitronpepper,True
+967,74,Kakedeig,True
+968,403,Frys selv is,True
+969,95,Mellomleggspapir,False
+972,249,Vaniljepulver,True
+973,57,Thousand island,True
+974,11,Gresskar,True
+975,122,Semulegryn,True
+976,332,Ansiktspleie,False
+977,575,Hårfarge,False
+978,950,Syttende mai-artikler,False
+980,932,Øyenbryn,False
+981,63,Medisterpølse,True
+982,249,Stjerneanis,True
+984,249,Hvitløkspepper,True
+985,249,Dill tørket,True
+986,88,Ingefærøl,True
+987,238,Nduja,True
+988,77,Potetbåter,True
+991,65,Hermetisk paprika,True
+992,745,Strømper,False
+993,249,Einerbær,True
+994,276,Kålrabistappe,True
+995,316,Fruktsalt,False
+996,249,Koriander tørket,True
+998,316,Måltidserstatter,False
+999,74,Bakekakao,True
+1000,164,Proteinpudding,True
+1003,74,Cocktailbær,True
+1004,,Blomster og planter,False
+1005,1004,Plantejord,False
+1006,65,Kapers,True
+1007,26,Ferdigdrink,True
+1008,841,Penn,False
+1009,13,Vegansk pålegg,True
+1010,57,Dressingmix,True
+1011,82,Smultringer,True
+1012,249,Pizzakrydder,True
+1013,316,Ølgjær,False
+1015,199,Luftfrisker,False
+1017,211,Mandelpudding,True
+1018,164,Desserttopping,True
+1022,70,Grillspyd,True
+1026,305,Lammebog,True
+1027,392,Storfelever,True
+1028,249,Kanel,True
+1031,316,Nypeekstrakt,False
+1032,249,Safran,True
+1034,304,Sitronmousse,True
+1037,289,Elg,True
+1038,43,Kjøttkaker,True
+1041,41,Tofu,True
+1044,5,Matvin,True
+1045,249,Ingefær tørket,True
+1046,2,Kokosnøtter,True
+1047,70,Blodpølse,True
+1049,255,Allergimidler,False
+1052,134,Minestronesuppe,True
+1057,74,Kakekrem,True
+1058,46,Rype,True
+1059,11,Aubergin,True
+1060,65,Hermetisk artisjokk,True
+1061,17,Babyolje,False
+1070,156,Moussekake,True
+1071,195,Terteskjell,True
+1072,607,Stellematte,False
+1075,195,Papadam,True
+1077,279,Hermetisk pære,True
+1080,841,Tusj,False
+1081,249,Fiskekrydder,True
+1082,17,Sinksalve,False
+1084,415,Cookiesmix,True
+1086,195,Rugchips,True
+1087,332,Håndkrem,False
+1090,9,Risdrikk,True
+1096,380,Kirsebærsaus,True
+1101,392,Storfe kraftbein,True
+1102,106,Isgalt,True
+1103,74,Vaniljekrem,True
+1105,513,Wasabi,True
+1106,122,Griljermel,True
+1109,950,Ballonger,False
+1110,745,Vaskenett,False
+1111,249,Viltkrydder,True
+1113,249,Estragon tørket,True
+1114,130,Øvrig taco,True
+1117,11,Mais,True
+1120,415,Bakemix,True
+1121,255,Kondomer,False
+1130,17,Babysåpe,False
+1131,156,Pavlova,True
+1136,159,Bjørnebær,True
+1139,209,Skalldyr i lake,True
+1140,17,Tørre engangskluter,False
+1141,276,Kålstuing,True
+1144,5,Ajvar,True
+1146,380,Mangosaus,True
+1149,305,Lammeskav,True
+1150,415,Pavlovamix,True
+1156,26,Drinkmix,True
+1157,1156,Brennevinessens,True
+1158,19,Pultost,True
+1161,139,Fiken tørket,True
+1162,932,Mascara,False
+1163,533,Alkoholfri cider,True
+1167,841,Hyssing,False
+1168,2,Pitahaya,True
+1170,249,Tandoori Masala,True
+1171,17,Babypudder,False
+1176,106,Abbor,True
+1182,392,Oksehaler,True
+1185,308,Karse,True
+1186,226,Soyafløte,True
+1189,74,Kakebunn,True
+1190,249,Persille tørket,True
+1191,403,Mochi-is,True
+1193,77,Marinerte poteter,True
+1197,745,Klesrulle,False
+1198,575,Hårskum,False
+1199,47,Kyllinglever,True
+1204,113,Viltpate,True
+1206,305,Øvrig lammekjøtt,True
+1207,1156,Drinkmix,True
+1211,57,Balsamicodressing,True
+1212,95,Poseklemme,False
+1214,57,Chipotlemajones,True
+1215,93,Iskjeks,True
+1216,607,Ammeinnlegg,False
+1220,255,Sårbehandling,False
+1221,341,Kokosolje,True
+1224,70,Matkasse,True
+1231,74,Konditorfarge,True
+1237,171,Tennvæske,False
+1241,289,Hjort,True
+1242,61,Yoghurtnøtter,True
+1250,575,Tørrshampo,False
+1269,122,Maismel,True
+1276,305,Lammecarre,True
+1284,932,Pudder,False
+1291,607,Smekke,False
+1310,156,Fyrstekake,True
+1330,19,Øvrig ost,True
+1336,841,Øvrig kontorrekvisita,False
+1337,47,Kylling revet,True
+1344,205,Vårrullplater,True
+1351,209,"Skalldyr, fryst",True
+1399,91,Calzone,True
+1401,134,Øvrige supper,True
+1421,538,Grillolje,True
+1425,392,Flatbiff,True
+1441,415,Bollemix,True
+1463,43,Kjøttpudding,True
+1476,156,Kringle,True
+1488,205,Paibunnmix,True
+1491,310,Bananpålegg,True
+1493,164,Soyadessert,True
+1505,392,Øvrig storfekjøtt,True
+1521,538,Marinade,True
+1526,156,Gulrotkake,True
+1530,290,Matdelere,False
+1538,513,Nori,True
+1540,5,Ølsaus,True
+1543,156,Karamellkake,True
+1568,16,Badebleier,False
+1573,57,Italiensk dressing,True
+1580,134,Hummersuppe,True
+1587,249,Biffkrydder,True
+1589,46,Høns,True
+1594,5,Tranebærsaus,True
+1598,932,Øyenskygge,False
+1603,57,Fransk dressing,True
+1618,290,Kjøkkenredskaper,False
+1643,290,Åpnere,False
+1653,132,Moussaka kit,True
+1659,107,Kokmalt kaffe,True
+1665,392,Oksestek,True
+1679,279,Hermetisk moreller/kirsebær,True
+1683,74,Tørrmelk,True
+1684,341,Trøffelolje,True
+1686,52,Flekkfjerner,False
+1688,437,Spisepinner,False
+1709,415,Gulrotkakemix,True
+1721,115,Sushiris,True
+1733,437,Lysmansjetter,False
+1744,222,Bøker,False
+1755,74,Fondant,True
+1790,513,Rullematte,True
+1791,276,Stuing,True
+1795,70,Ratatuille,True
+1797,57,Blåmuggostdressing,True
+1798,17,Babyhudpleie,False
+1803,173,Spareribs,True
+1807,249,Lammekrydder,True
+1811,173,Svin sideflesk,True
+1815,249,Potetkrydder,True
+1821,74,Surdeigspulver,True
+1832,57,Vinaigrette,True
+1848,96,Fiskepostei,True
+1867,119,Tannpleie,False
+1874,171,Grillpinner,False
+1875,249,Allroundkrydder,True
+1876,205,Pizzabunnmix,True
+1900,437,Duk,False
+1901,611,Riseddik,True
+1907,841,Blyant,False
+1909,932,Rouge,False
+1912,156,Mazarin,True
+1923,47,Kyllingspyd,True
+1932,745,Bøff,False
+1937,305,Ytrefilet av lam,True
+2011,113,Landpate,True
+2017,173,Svinelever,True
+2051,43,Kebabkjøtt,True
+2056,5,Grillsaus,True
+2065,607,Fruktnett,False
+2068,2,Papaya,True
+2072,249,Lakrispulver,True
+2073,318,Tørket sopp,True
+2107,249,Sursildkrydder,True
+2108,392,Storfebog,True
+2112,283,Andefett,True
+2115,380,Solbærsaus,True
+2121,95,Gjenbrukspose,False
+2134,156,Vaniljedrøm,True
+2136,415,Focacciamix,True
+2138,173,Svinenakke,True
+2146,19,Gamalost,True
+2159,134,Brokkolisuppe,True
+2167,211,Panna cotta,True
+2175,249,Salvie tørket,True
+2193,5,Myntesaus,True
+2215,841,Gråpapir,False
+2217,113,Hvitløkspate,True
+2219,113,Pepperpate,True
+2222,932,Eyeliner/Kajal,False
+2225,249,Merian tørket,True
+2228,316,Malteekstrakt,False
+2237,106,Flyndre/rødspette,True
+2250,70,Stekt løk,True
+2264,134,Gazpacho,True
+2278,305,Lammeskank,True
+2296,65,Sølvløk,True
+2308,950,Serpentiner,False
+2311,122,Rismel,True
+2320,107,Øvrig kaffe,True
+2333,932,Dekkstift,False
+2356,134,Linsesuppe,True
+2358,305,Lammebiff,True
+2361,464,Dyreshampo,False
+2366,122,Hirse,True
+2368,341,Frityrolje,True
+2387,5,Ravigottesaus,True
+2392,139,Tørket frukt,True
+2396,139,Bananchips,True
+2399,139,Ananas tørket,True
+2417,46,Gås,True
+2427,415,Eplekakemix,True
+2449,575,Hårkur,False
+2494,841,Klebemasse,False
+2525,61,Paranøtter,True
+2535,392,Bibringe storfe,True
+2545,5,Cumberlandsaus,True
+2546,221,Sigar,False
+2548,528,Møbler,False
+2557,378,Hårfjerningsprodukter,False
+2568,171,Pizzaovn,False
+2588,392,Rundstek,True
+2590,195,Kavring,True
+2599,305,Lammekjøtt strimlet,True
+2655,415,Raspeballmix,True
+2659,255,Fordøyelsesmidler,False
+2678,950,Gavepapir,False
+2703,70,Sveler,True
+2747,932,Foundation,False
+2774,74,Pynteglasur,True
+2787,105,Hvalkjøtt,True
+2844,464,Øvrige dyreartikler,False
+2933,156,Bløtkake,True
+2942,932,Lipliner,False
+2974,437,Glass,False
+3003,74,Glasur,True
+3079,171,Engangsgrill,False
+3095,156,Krydderkake,True
+3125,392,Bankekjøtt,True
+3143,173,Svinevinger,True
+3207,70,Omelett ferdig,True
+3211,156,Formkake,True
+3220,380,Øvrig dessertsaus,True
+3266,113,Gåselever,True
+3391,5,Ramsløkpure,True
+4465,607,Bleieposer,False
+4466,607,Gulpeklut,False
+4467,279,Hermetisk aprikos,True
+4468,607,Øvrige babyartikler,False
+4470,249,Fennikel tørket,True
+4471,106,Piggvar,True
+4472,1,Fruktkurv,True
+4473,5,Bruschettasaus,True
+4474,513,Wakamesalat,True
+4475,5,Pokesaus,True
+4476,209,Skalldyrkasse,True
+4477,134,Løksuppe,True
+4478,392,Storfeskank,True
+4479,134,Søtpotetsuppe,True
+4480,173,Matblod,True
+4481,134,Gulasjsuppe,True
+4483,60,Popcornkrydder,True
+4484,52,Stivelse,False
+4485,1004,Plantenæring,False
+4486,305,Indrefilet av lam,True
+4487,156,Mor monsen,True
+4488,305,Lammeribbe,True
+4489,65,Relish,True
+4499,332,Solkrem,False
+4500,51,Bilpleie,False
+4503,14,Kjøttpålegg,True
+4505,279,Hermetisk plommer,True
+4506,8,Eggehvite,True
+4507,106,Øvrig fisk,True
+4508,106,Uer,True
+4509,305,Pinnekjøtt,True
+4531,308,Estragon,True
+4532,173,Grillribbe,True
+4533,2,Plommer,True
+4554,392,Flankestek,True
+4555,745,Hansker,False
+4588,2,Mangostan,True
+4591,392,T-Ben storfe,True
+4595,745,Tekstilfarge,False
+4615,106,Blekksprut,True
+4623,173,Svinehode,True
+4636,106,Brosme,True
+4661,156,Romkake,True
+4663,173,Svinekam,True
+4669,142,Øvrig pasta,True
+4674,745,Øvrige klær,False
+4675,77,Bakt potet,True
+4677,305,Fårikålkjøtt,True
+4685,415,Sconesmix,True
+4691,2,Fersken,True
+4693,156,Sitronkake,True
+4701,305,Kje/geitekjøtt,True
+4714,950,Påskeartikler,False
+4718,74,Vaffelrøre,True
+4746,173,Svinenyrer,True
+4767,171,Grillkull,False
+4793,65,Hermetisk gulrot,True
+4795,26,Gløgg,True
+4799,47,Kyllingskrog,True
+4802,305,Lammesadel,True
+4803,305,Lammebaron,True
+4807,106,Lange,True
+4870,171,Grillhanske,False
+4874,310,Øvrig søtpålegg,True
+4892,173,Flintstek,True
+4894,173,Svin grillben,True
+4900,168,Medisterdeig,True
+4901,305,Lam slagside,True
+4904,308,Øvrige krydderurter,True
+4923,289,Øvrig viltkjøtt,True
+4943,437,Bordbrikke,False
+4944,171,Grillbørste,False
+4945,1,Spiselige blomster,True
+4952,159,Moreller/kirsebær,True
+5014,11,Rabarbra,True
+5019,2,Aprikos,True
+5020,171,Grillspade,False
+5038,171,Grillklype,False
+5039,2,Øvrig frukt,True
+5043,26,Rødvin,True
+5044,173,Porchetta,True
+5045,159,Multer,True
+5046,11,Artisjokk,True
+5047,195,Ostestenger,True
+5048,106,Gjørs,True
+5049,84,Plukkfisk,True
+5050,106,Gjedde,True
+5051,84,Stekt fisk,True
+5052,106,Brisling,True
+5053,106,Hvitting,True
+5054,13,Kabaret,True
+5055,106,Lyr,True
+5056,61,Kastanjer,True
+5057,106,Skate,True
+5058,719,Tørrfisk,True
+5059,106,Boknafisk,True
+5060,156,Banankake,True
+5061,77,Stekte poteter,True
+5062,70,Eggerøre,True
+5063,255,Munnbind,False
+5064,156,Hvetestang,True
+5065,156,Waleskringle,True
+5066,82,Appelsinflette,True
+5067,106,Barracuda,True
+5068,5,Ribbesaus,True
+5069,156,Eplekake,True
+5070,305,Lammelever,True
+5071,106,Sik,True
+5072,575,Hårbørste,False
+5073,502,Neglefil,False
+5074,392,Lårtunge,True
+5075,502,Neglesaks,False
+5076,168,Elgkarbonadedeig,True
+5077,502,Pinsett,False
+5078,65,Gresskar syltet,True
+5079,932,Sminkespeil,False
+5080,118,Briller,False
+5081,5080,Solbriller,False
+5085,156,Mandeltopp,True
+5086,310,Karamellpålegg,True
+5087,159,Bærblanding,True
+5088,156,Hvetekake,True
+5090,91,Pizzasnurrer,True
+5091,173,Syltelabber,True
+5092,84,Fiskefarse/deig,True
+5093,173,Ribbefett,True
+5094,156,Fruktkake,True
+5096,249,Spraykrydder,True
+5097,1004,Busker og trær,False
+5098,1004,Potteplanter,False
+5099,538,Rub,True
+5100,1004,Blomsterfrø,False
+5101,1004,Blomsterløk,False
+5102,1004,Blomsterpotter,False
+5103,1004,Uteplanter,False
+5105,1004,Blomster,False
+5107,305,Lam hel,True
+5111,156,Grønn genser,True
+5114,142,Pastaris,True
+5115,156,Krokankake,True
+5117,156,Verdens beste,True
+5118,279,Hermetisk sviske,True
+5125,1004,Silkeplanter,False
+5126,341,Maisolje,True
+5130,305,Lammehjerte,True
+5131,156,Sirupskake,True
+5134,139,Aprikosterte,True
+5141,51,Hobby,False
+5142,5141,Leker,False
+5143,437,Mugge,False
+5144,437,Kanne,False
+5145,156,Vannbakkels,True
+5146,528,Skadedyrbekjempelse,False
+5149,745,Refleks,False
+5156,745,Paraply,False
+5157,437,Skål,False
+5159,5141,Håndarbeid,False
+5161,437,Kopp,False
+5162,437,Tallerken,False
+5163,437,Bordduksklemmer,False
+5164,950,Kort,False
+5165,437,Fat,False
+5167,841,Korrekturlakk,False
+5168,177,Bananmelk,True
+5169,437,Eggeglass,False
+5170,74,Pepperkakedeig,True
+5172,156,Bringebærkake,True
+5173,156,Prinsessekake,True
+5180,841,Tegnestifter,False
+5182,841,Binders,False
+5183,841,Kalkulator,False
+5186,841,Blyantspisser,False
+5187,60,Smågodt,True
+5188,156,Halloweenkake,True
+5190,171,Propangass,False
+5191,437,Bestikk,False
+5192,841,Klistremerker,False
+5203,950,Konfetti,False
+5206,2,Carambole,True
+5208,332,Selvbruningskrem,False
+5220,63,Sosisser,True
+5221,950,Godteposer,False
+5222,289,Hest,True
+5232,415,Ostekakemix,True
+5237,950,Juleartikler,False
+5252,380,Lakrissaus,True
+5263,88,Juleøl,True
+5266,168,Kjøttdeig halal,True
+5276,841,Penal,False
+5280,841,Bokbind,False
+5284,171,Lampeolje,False
+5286,528,Antiskli,False
+5287,950,Knall bon bon,False
+5295,950,Gavekort,False
+5299,745,Lue,False
+5305,96,Påleggslaks,True
+5309,745,Skjerf,False
+5318,950,Matgave,False
+5322,316,Proteinpulver,False
+5327,255,Nødprevensjon,False
+5328,255,Kvalmestillende,False
+5344,279,Hermetisk kastanjer,True
+5347,304,Jordbærmousse,True
+5348,304,Karamellmousse,True
+5351,5,Adzika,True
+5352,222,Erotiske blader,False
+5360,65,Hermetisk løk,True
+5361,221,Julekalender,False
+5371,5141,Spill,False
+5380,432,Fondueost,True
+5393,171,Pizzastein,False
+5530,11,Øvrige grønnsaker,True
+5623,159,Stikkelsbær,True
+5629,159,Solbær,True
+5678,159,Tyttebær,True
+5719,13,Mellommåltidsbarer,True
+5720,5719,Måltidsbar,True
+5721,5719,Energibar,True
+5729,209,Reker i lake,True
+5730,105,Skjell,True
+5732,132,Øvrig middag kit,True
+5733,5730,Østers,True
+5734,5730,Kamskjell,True
+5737,51,Stearinlys,False
+5738,5737,Telys,False
+5739,341,Øvrig matolje,True
+5758,5737,Duftlys,False
+5761,82,Donuts,True
+5762,43,Kjøttretter,True
+5763,5762,Karbonader,True
+5765,5762,Kjøttboller,True
+5766,5762,Lunsjkaker,True
+5769,5762,Medisterkaker,True
+5787,5762,Kebabkjøtt,True
+5790,5737,Kronelys,False
+5794,5737,Kubbelys,False
+5798,26,Vin,True
+5799,5798,Rødvin,True
+5800,,Dessert og iskrem,True
+5801,5800,Proteinpudding,True
+5802,5800,Riskrem,True
+5803,5800,Is,True
+5804,5803,Småis multipack,True
+5805,5803,Småis,True
+5806,5803,Dessertis,True
+5809,5800,Dessertpuddinger,True
+5811,5800,Dessertsauser,True
+5812,5811,Sjokoladesaus,True
+5814,5800,Tiramisu,True
+5815,5800,Gele,True
+5816,5800,Hermetisk frukt og bær,True
+5818,5811,Karamellsaus,True
+5819,5800,Mousse,True
+5820,5819,Sjokolademousse,True
+5823,5809,Karamellpudding,True
+5824,5803,Frys selv is,True
+5826,5800,Desserttopping,True
+5830,5819,Sitronmousse,True
+5831,5809,Panna cotta,True
+5834,5816,Hermetisk moreller/kirsebær,True
+5835,5811,Bringebærsaus,True
+5837,5811,Jordbærsaus,True
+5853,26,Julebrus,True
+5854,11,Grønnsaksmikser,True
+5886,2,Persimon,True
+5923,60,Konfekt,True
+5936,159,Tranebær,True
+5991,5811,Øvrig dessertsaus,True
+6005,197,Pinnekjøtt,True
+6009,5803,Mochi-is,True
+6010,60,Marsipangris,True
+6013,74,Bakelim,True
+6015,43,Pinnekjøtt,True
+6018,43,Ribbe,True
+6036,5737,Fakkelboks,False
+6055,575,Hårstrikker,False
+6060,5816,Hermetisk mango,True
+6084,341,Soyaolje,True
+6090,23,Brød,True
+6100,2,Nektarin,True
+6101,132,Koppretter,True
+6103,13,Syltetøy til ost,True
+6106,5719,Knekkebrød sandwich,True
+6107,84,Lakseburger,True
+6109,1004,Lecakuler,False
+6110,5,Søt chilisaus,True
+6111,122,Pizzamel,True
+6112,84,Øvrige fiskeretter,True
+6113,82,Øvrige småkaker,True
+6122,4,Pizzatopping,True
+6126,122,Kikertmel,True
+6127,96,Øvrig fiskepålegg,True
+6130,139,Epler tørket,True
+6135,119,Tannbørste elektrisk,False
+6145,5816,Hermetisk eple,True
+6150,195,Øvrig tørt brød,True
+6159,156,Churros,True
+6174,74,Kransekakemasse,True
+6178,74,Eggerstatning,True
+6181,128,Øvrig grøt,True
+6183,132,Turmat,True
+6185,5737,Antikklys,False
+6193,346,Øvrig personlig hygiene,False
+6194,332,Øvrig hudpleie,False
+6212,249,Øvrig krydder,True
+6214,113,Øvrig postei,True
+6222,308,Kjørvel,True
+6225,5800,Øvrig dessert,True
+6229,51,Toalettpapir,False
+6230,95,Avfallssekker,False
+6231,33,Ferdigretter,True
+6234,51,Tørkerull,False
+6235,14,Hamburgerrygg,True
+6237,14,Roastbiff og pastrami,True
+6238,14,Servelater,True
+6239,51,Batterier og lyspærer,False
+6240,6239,Batterier,False
+6243,51,Borddekning og servietter,False
+6244,6243,Servietter,False
+6245,6231,Ferdigmåltid,True
+6246,6231,Lasagne ferdig,True
+6247,6231,Pastarett ferdig,True
+6248,14,Kylling- og kalkunpålegg,True
+6249,6243,Engangservice,False
+6250,6231,Gryterett ferdig,True
+6251,6231,Pannekaker,True
+6256,118,Klær,False
+6257,6256,Sokker,False
+6258,6256,Skopleie,False
+6259,6256,Strømper,False
+6266,6231,Vårruller,True
+6270,6256,Undertøy,False
+6271,6256,Øvrige klær,False
+6272,6231,Taco ferdig,True
+6275,6231,Fiskemåltid ferdig,True
+6276,6239,Lyspære,False
+6278,6231,Panert kjøtt,True
+6300,6239,Lysrør,False
+6324,6231,Sveler,True
+6336,6231,Grillspyd,True
+6347,6243,Duk,False
+6359,26,Gløggmiks,True
+6372,14,Øvrig kjøttpålegg,True
+6374,8,Mellomretter,True
+6375,8,Proteinpudding,True
+6385,156,Sjokoflarn,True
+6390,139,Apsikat,True
+6391,139,Sukat,True
+6394,426,Sigaretter,False
+6397,426,Snus,False
+6399,426,Rulletobakk,False
+6406,426,Sigar,False
+8384,6256,Kleshenger,False
+8546,5762,Øvrige kjøttretter,True
+8629,6256,Luktfjerner,False
+8726,528,Baderomsutstyr,False
+8727,6256,T-Skjorter,False
+8730,332,Fotpleie,False
+8731,119,Øvrig tannpleie,False
+8732,6256,Sovemaske,False
+8736,19,Gulost,True
+8741,19,Kittmodnede oster,True
+8742,8741,Kittmodnet ost,True
+8746,77,Øvrige potetretter,True
+8759,13,"Smør, margarin og matfett",True
+8760,8759,Smør,True
+8761,26,Øl og cider,True
+8762,8761,Øl,True
+8763,8759,Smørblanding,True
+8764,8,Yoghurter,True
+8765,8764,Yoghurt,True
+8766,8761,Cider,True
+8769,8764,Matyoghurt,True
+8770,65,Kikerter,True
+8771,8761,Alkoholfritt øl,True
+8772,33,Risprodukter,True
+8773,8772,Ris,True
+8776,8759,Kryddersmør,True
+8777,33,Pizzaretter,True
+8778,8777,Pizza,True
+8779,8759,Margarin,True
+8780,8764,Drikkeyoghurt,True
+8781,49,Vann naturell,True
+8783,8761,Lettøl,True
+8786,8761,Ingefærøl,True
+8789,8761,Alkoholfri cider,True
+8793,8772,Quinoa,True
+8803,22,Piadinabrød,True
+8804,171,Øvrig grill,False
+8855,36,Horn,True
+8874,82,Scones,True
+8881,5819,Bringebærmousse,True
+8905,,Apotekvarer,False
+8906,8905,Smertestillende,False
+8908,8905,Plaster,False
+8911,8905,Selvtester,False
+8912,8911,Graviditetstest,False
+8915,8905,Røykeslutt,False
+8921,8905,Kondomer,False
+8926,8905,Øvrige apotekvarer,False
+8945,6256,Hansker,False
+9028,51,Sport,False
+9029,9028,Øvrig sportsutstyr,False

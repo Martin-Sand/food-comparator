@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Comparison</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                {% if current_user.is_authenticated %}
+                    <div class="user-account-info">
+                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        {% if current_user.is_subscribed() %}
+                            <span class="badge-premium">Premium</span>
+                        {% else %}
+                            <span class="badge-free">Free</span>
+                        {% endif %}
+                    </div>
+                    <div class="user-actions">
+                        {% if current_user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="auth-link">Admin</a>
+                        {% endif %}
+                        <a href="{{ url_for('profile_page') }}" class="auth-link">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="user-actions">
+                        <a href="{{ url_for('login') }}" class="auth-link">Login</a>
+                        <a href="{{ url_for('register') }}" class="auth-link">Register</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    
+    <div class="comparison-container">
+        <header class="comparison-header">
+            <div class="header-actions">
+                {% if current_user.is_authenticated and current_user.is_subscribed() %}
+                <button id="save-search-btn" class="save-search-btn">💾 Save Search</button>
+                <button id="share-comparison-btn" class="save-search-btn">🔗 Share Comparison</button>
+                {% endif %}
+            </div>
+            <h1>Product Comparison</h1>
+            <section id="categories-section" class="collapsible-section">
+                <div class="section-header collapsible-header" id="categories-header">
+                    <h2>📁 Selected Categories</h2>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div id="selected-categories-display" class="section-content categories-content"></div>
+            </section>
+            <section id="category-summary-section" class="collapsible-section" style="display:none;">
+                <div class="section-header collapsible-header" id="summary-header">
+                    <h2>Summary</h2>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div id="category-summary" class="section-content"></div>
+            </section>
+            <section id="my-product-section" class="collapsible-section" style="display:none;">
+                <div class="section-header collapsible-header" id="my-product-header">
+                    <h2>My Product</h2>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div id="my-product-info" class="section-content"></div>
+            </section>
+            <div class="filter-controls">
+                <div class="search-filter">
+                    <input type="text" id="product-search" placeholder="Search products...">
+                </div>
+                <div class="sort-controls">
+                    <select id="sort-by">
+                        <option value="price_asc">Price (Low to High)</option>
+                        <option value="price_desc">Price (High to Low)</option>
+                        <option value="unit_price_asc">Unit Price (Low to High)</option>
+                        <option value="unit_price_desc">Unit Price (High to Low)</option>
+                        <option value="name_asc">Name (A to Z)</option>
+                        <option value="name_desc">Name (Z to A)</option>
+                    </select>
+                </div>
+                
+                <div class="view-controls">
+                    <!-- Selection buttons -->
+                    <div class="button-group selection-group">
+                        <button id="select-all-products" style="display: none;">☑ Select All</button>
+                        <button id="delete-selected" class="delete-selected-btn" style="display: none;">🗑️ Delete Selected</button>
+                    </div>
+                    
+                    <!-- View toggle dropdown -->
+                    <div class="dropdown">
+                        <button class="dropdown-btn" id="view-dropdown-btn">👁 View Options ▾</button>
+                        <div class="dropdown-content" id="view-dropdown">
+                            <button id="toggle-nutrition">Nutrition Info</button>
+                            <button id="toggle-allergens">Allergens</button>
+                            <button id="toggle-charts">Charts</button>
+                            <button id="toggle-matrix">Matrix View</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter options dropdown -->
+                    <div class="dropdown">
+                        <button class="dropdown-btn" id="filter-dropdown-btn">🔍 Filter Options ▾</button>
+                        <div class="dropdown-content" id="filter-dropdown">
+                            <button id="hide-no-nutrition">Hide No Nutrition</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <section id="matrix-section" class="matrix-section" style="display:none;">
+            <div class="matrix-header">
+                <h2>Nutrition Matrix</h2>
+                <div class="matrix-actions">
+                    <button id="toggle-matrix-stores" class="small">Show Stores</button>
+                    <button id="toggle-matrix-allergens" class="small">Show Allergens</button>
+                    <button id="export-matrix-csv" class="small">Export CSV</button>
+                </div>
+            </div>
+            <div id="matrix-container" class="matrix-container">
+                <!-- Matrix table will be injected here -->
+            </div>
+        </section>
+
+        <main class="comparison-grid" id="product-grid">
+            <!-- Products will be inserted here by JavaScript -->
+        </main>
+    </div>
+    <script src="/static/comparison.js"></script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Nutrition - Product Comparator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .edit-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .edit-header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .edit-header h1 {
+            color: #3a3a6a;
+            margin: 0 0 10px 0;
+            font-size: 1.8em;
+        }
+        
+        .edit-subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .nutrition-editor {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .btn-save {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-cancel {
+            padding: 15px 40px;
+            background: #f7f7fb;
+            color: #666;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-cancel:hover {
+            background: #e7e7f7;
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Placeholder</a>
+            <div class="header-right">
+                {% if current_user.is_authenticated %}
+                    <div class="user-account-info">
+                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        {% if current_user.is_subscribed() %}
+                            <span class="badge-premium">Premium</span>
+                        {% else %}
+                            <span class="badge-free">Free</span>
+                        {% endif %}
+                    </div>
+                    <div class="user-actions">
+                        <a href="{{ url_for('profile_page') }}" class="auth-link">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    
+    <div class="edit-page">
+        <div class="edit-header">
+            <h1>🍎 Edit Nutrition Data</h1>
+            <div class="edit-subtitle" id="search-name-display"></div>
+        </div>
+        
+        <div class="nutrition-editor">
+            <form id="product-form">
+                <!-- Product Name & Description -->
+                <div class="form-group">
+                    <label for="name-input">Product Name</label>
+                    <input type="text" id="name-input" name="name" placeholder="e.g., My Yogurt">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description-input">Description (optional)</label>
+                    <textarea id="description-input" name="description" placeholder="Additional details..."></textarea>
+                </div>
+                
+                <!-- AI Extraction Options -->
+                <div class="ai-extraction-section">
+                    <h3>Quick Fill Options:</h3>
+                    
+                    <!-- Text Paste -->
+                    <div class="extraction-option">
+                        <h4>📝 Paste Text</h4>
+                        <textarea id="paste-text-area" placeholder="Paste nutrition label text here (e.g., 'Protein 5g, Fat 3.5g, Carbs 12g')"></textarea>
+                        <button type="button" id="extract-from-text-btn" class="extract-btn">Extract Nutrition</button>
+                    </div>
+                    
+                    <!-- Photo Upload -->
+                    <div class="extraction-option">
+                        <h4>📷 Upload Photo</h4>
+                        <div class="file-upload-area" id="file-upload-area">
+                            <p>Click or drag photo of nutrition label</p>
+                            <input type="file" id="file-input" accept="image/*" hidden>
+                        </div>
+                        <div id="photo-preview-area" style="display: none;">
+                            <img id="photo-preview" src="" alt="Preview">
+                            <p id="photo-filename"></p>
+                            <button type="button" id="extract-from-photo-btn" class="extract-btn">Extract Nutrition</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr style="margin: 30px 0;">
+                
+                <!-- Manual Nutrition Inputs -->
+                <fieldset class="nutrition-group">
+                    <legend>Nutrition (per 100g)</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="energy-input" id="energy-label">Calories (kcal)</label>
+                            <input type="number" id="energy-input" name="energi_kcal" step="0.1" placeholder="e.g., 150">
+                            <button type="button" id="toggle-energy-unit" class="unit-toggle">Switch to kJ</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fat-input">Fat (g)</label>
+                            <input type="number" id="fat-input" name="fett_totalt" step="0.1" placeholder="e.g., 5">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="carbs-input">Carbohydrates (g)</label>
+                            <input type="number" id="carbs-input" name="karbohydrater" step="0.1" placeholder="e.g., 20">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="protein-input">Protein (g)</label>
+                            <input type="number" id="protein-input" name="protein" step="0.1" placeholder="e.g., 8">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fiber-input">Fiber (g)</label>
+                            <input type="number" id="fiber-input" name="kostfiber" step="0.1" placeholder="e.g., 2">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="salt-input">Salt (g)</label>
+                            <input type="number" id="salt-input" name="salt" step="0.1" placeholder="e.g., 0.5">
+                        </div>
+                    </div>
+                    
+                    <!-- Fat Breakdown - Always visible -->
+                    <h4 style="margin-top: 20px; color: #3a3a6a;">Fat Breakdown (Optional)</h4>
+                    <div id="fat-breakdown" class="breakdown-section">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="saturated-input">Saturated Fat (g)</label>
+                                <input type="number" id="saturated-input" name="mettet_fett" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="monounsaturated-input">Monounsaturated Fat (g)</label>
+                                <input type="number" id="monounsaturated-input" name="enumettet_fett" step="0.1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="polyunsaturated-input">Polyunsaturated Fat (g)</label>
+                                <input type="number" id="polyunsaturated-input" name="flerumettet_fett" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Carb Breakdown - Always visible -->
+                    <h4 style="margin-top: 20px; color: #3a3a6a;">Carbohydrate Breakdown (Optional)</h4>
+                    <div id="carb-breakdown" class="breakdown-section">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sugar-input">of which Sugars (g)</label>
+                                <input type="number" id="sugar-input" name="sukkerarter" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn-save" id="save-btn">💾 Save Changes</button>
+            <button class="btn-cancel" id="cancel-btn">Cancel</button>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script>
+        let searchId = null;
+        let searchName = '';
+        let originalData = null;
+        let selectedFile = null;
+        
+        // Load the editing data
+        document.addEventListener('DOMContentLoaded', () => {
+            const editingData = sessionStorage.getItem('editingNutrition');
+            if (editingData) {
+                const data = JSON.parse(editingData);
+                searchId = data.id;
+                searchName = data.name;
+                originalData = data;
+                
+                document.getElementById('search-name-display').textContent = `Editing: ${searchName}`;
+                
+                // Restore user product data if present
+                if (data.user_product_data && data.user_product_data.name) {
+                    restoreNutritionData(data.user_product_data);
+                }
+            } else {
+                alert('No editing data found. Redirecting to saved searches.');
+                window.location.href = '/saved_searches';
+            }
+            
+            // Setup photo upload
+            setupPhotoUpload();
+            
+            // Setup text extraction
+            setupTextExtraction();
+            
+            // Setup energy unit toggle only
+            setupEnergyToggle();
+        });
+        
+        function setupEnergyToggle() {
+            let currentEnergyUnit = 'kcal';
+            const energyInput = document.getElementById('energy-input');
+            const energyLabel = document.getElementById('energy-label');
+            const toggleEnergyBtn = document.getElementById('toggle-energy-unit');
+            
+            if (toggleEnergyBtn && energyInput && energyLabel) {
+                toggleEnergyBtn.addEventListener('click', () => {
+                    const currentValue = parseFloat(energyInput.value);
+                    
+                    if (currentEnergyUnit === 'kcal') {
+                        currentEnergyUnit = 'kj';
+                        energyInput.name = 'energi_kj';
+                        energyLabel.childNodes[0].textContent = 'Energy (kJ)';
+                        toggleEnergyBtn.textContent = 'Switch to kcal';
+                        if (!isNaN(currentValue)) {
+                            energyInput.value = (currentValue * 4.184).toFixed(0);
+                        }
+                    } else {
+                        currentEnergyUnit = 'kcal';
+                        energyInput.name = 'energi_kcal';
+                        energyLabel.childNodes[0].textContent = 'Calories (kcal)';
+                        toggleEnergyBtn.textContent = 'Switch to kJ';
+                        if (!isNaN(currentValue)) {
+                            energyInput.value = (currentValue / 4.184).toFixed(0);
+                        }
+                    }
+                });
+            }
+        }
+        
+        function setupPhotoUpload() {
+            const fileUploadArea = document.getElementById('file-upload-area');
+            const fileInput = document.getElementById('file-input');
+            const photoPreview = document.getElementById('photo-preview');
+            const photoFilename = document.getElementById('photo-filename');
+            const photoPreviewArea = document.getElementById('photo-preview-area');
+            const extractPhotoBtn = document.getElementById('extract-from-photo-btn');
+            
+            fileUploadArea.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleFileSelected(file);
+                }
+            });
+            
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('drag-over');
+            });
+            
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('drag-over');
+            });
+            
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleFileSelected(file);
+                }
+            });
+            
+            function handleFileSelected(file) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    photoPreview.src = e.target.result;
+                    photoFilename.textContent = file.name;
+                    photoPreviewArea.style.display = 'block';
+                    fileUploadArea.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            extractPhotoBtn.addEventListener('click', async () => {
+                if (!selectedFile) return;
+                
+                extractPhotoBtn.disabled = true;
+                extractPhotoBtn.textContent = 'Extracting...';
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('image', selectedFile);
+                    
+                    const response = await fetch('/extract_nutrition_from_image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.nutrition) {
+                        fillNutritionFromExtraction(data.nutrition);
+                        alert('✅ Nutrition extracted successfully!');
+                    } else {
+                        alert('Failed to extract nutrition: ' + (data.error || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to extract nutrition from photo');
+                } finally {
+                    extractPhotoBtn.disabled = false;
+                    extractPhotoBtn.textContent = 'Extract Nutrition';
+                }
+            });
+        }
+        
+        function setupTextExtraction() {
+            const textArea = document.getElementById('paste-text-area');
+            const extractBtn = document.getElementById('extract-from-text-btn');
+            
+            extractBtn.addEventListener('click', async () => {
+                const text = textArea.value.trim();
+                if (!text) {
+                    alert('Please paste some text first');
+                    return;
+                }
+                
+                extractBtn.disabled = true;
+                extractBtn.textContent = 'Extracting...';
+                
+                try {
+                    const response = await fetch('/extract_nutrition_from_text', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: text })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.nutrition) {
+                        fillNutritionFromExtraction(data.nutrition);
+                        alert('✅ Nutrition extracted successfully!');
+                    } else {
+                        alert('Failed to extract nutrition: ' + (data.error || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to extract nutrition from text');
+                } finally {
+                    extractBtn.disabled = false;
+                    extractBtn.textContent = 'Extract Nutrition';
+                }
+            });
+        }
+        
+        function fillNutritionFromExtraction(nutrition) {
+            // This function uses the logic from main.js
+            if (window.fillFormFromParsedNutrition) {
+                window.fillFormFromParsedNutrition(nutrition);
+            }
+        }
+        
+        // Save button
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            const form = document.getElementById('product-form');
+            const formData = new FormData(form);
+            
+            const userProduct = {
+                name: formData.get('name') || 'My Product',
+                description: formData.get('description') || '',
+                nutrition: {
+                    energi_kcal: valWithUnit(formData.get('energi_kcal'), 'kcal'),
+                    energi_kj: valWithUnit(formData.get('energi_kj'), 'kJ'),
+                    fett_totalt: valWithUnit(formData.get('fett_totalt'), 'g'),
+                    karbohydrater: valWithUnit(formData.get('karbohydrater'), 'g'),
+                    kostfiber: valWithUnit(formData.get('kostfiber'), 'g'),
+                    protein: valWithUnit(formData.get('protein'), 'g'),
+                    salt: valWithUnit(formData.get('salt'), 'g')
+                }
+            };
+            
+            // Include breakdown fields if filled (always visible now)
+            const sat = valWithUnit(formData.get('mettet_fett'), 'g');
+            const mono = valWithUnit(formData.get('enumettet_fett'), 'g');
+            const poly = valWithUnit(formData.get('flerumettet_fett'), 'g');
+            if (sat) userProduct.nutrition.mettet_fett = sat;
+            if (mono) userProduct.nutrition.enumettet_fett = mono;
+            if (poly) userProduct.nutrition.flerumettet_fett = poly;
+            
+            const sugar = valWithUnit(formData.get('sukkerarter'), 'g');
+            if (sugar) userProduct.nutrition.sukkerarter = sugar;
+            
+            try {
+                const response = await fetch(`/api/update_search/${searchId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_product_data: userProduct
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Nutrition data updated successfully!');
+                    sessionStorage.removeItem('editingNutrition');
+                    window.location.href = '/saved_searches';
+                } else {
+                    alert('Failed to update: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save changes');
+            }
+        });
+        
+        // Cancel button
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+            if (confirm('Discard changes and go back?')) {
+                sessionStorage.removeItem('editingNutrition');
+                window.location.href = '/saved_searches';
+            }
+        });
+        
+        function valWithUnit(value, unit) {
+            const num = parseFloat(value);
+            if (isNaN(num)) return null;
+            return { amount: num, unit: unit };
+        }
+    </script>
+</body>
+</html>
