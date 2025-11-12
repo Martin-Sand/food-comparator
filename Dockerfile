@@ -28,6 +28,7 @@ RUN mkdir -p instance
 # Set environment variables
 ENV FLASK_APP=app/app.py
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
 
 # Run the application using startup script
 CMD ["./start.sh"]
