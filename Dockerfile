@@ -19,11 +19,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Create instance directory for SQLite (if needed)
+# Create instance directory for SQLite (if nseeded)
 RUN mkdir -p instance
-
-# Expose port
-EXPOSE 5050
 
 # Set environment variables
 ENV FLASK_APP=app/app.py
