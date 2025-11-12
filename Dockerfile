@@ -28,7 +28,7 @@ EXPOSE 5050
 # Set environment variables
 ENV FLASK_APP=app/app.py
 ENV PYTHONUNBUFFERED=1
-ENV PORT=5050
 
 # Run the application using gunicorn for production
-CMD gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app.app:app
+# Use sh -c to ensure $PORT variable expansion
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5050} --workers 2 --timeout 120 app.app:app"]
