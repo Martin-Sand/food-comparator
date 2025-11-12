@@ -42,10 +42,17 @@ app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(16))
 # Use SQLite for development, PostgreSQL for production
 # Use absolute path for SQLite to avoid path issues
 basedir = os.path.abspath(os.path.dirname(__file__))
-database_url = os.environ.get('DATABASE_URL', f'sqlite:///{os.path.join(basedir, "comparator.db")}')
-# Fix for Heroku PostgreSQL URL (postgres:// -> postgresql://)
-if database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+database_url = os.environ.get('DATABASE_URL')
+
+# If no DATABASE_URL is set, use SQLite with absolute path
+if not database_url:
+    database_url = f'sqlite:///{os.path.join(basedir, "comparator.db")}'
+    print(f"Using SQLite database at: {database_url}")
+else:
+    # Fix for Heroku/Railway PostgreSQL URL (postgres:// -> postgresql://)
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    print(f"Using PostgreSQL database")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
