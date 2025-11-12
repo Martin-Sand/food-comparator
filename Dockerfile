@@ -28,4 +28,4 @@ ENV PYTHONUNBUFFERED=1
 
 # Run the application using gunicorn for production
 # Use sh -c to ensure $PORT variable expansion
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5050} --workers 2 --timeout 120 app.app:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app.app:app"
