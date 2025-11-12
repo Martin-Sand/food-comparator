@@ -1871,6 +1871,30 @@ def price_history():
 
 
 # ============================
+# One-Time Migration Endpoint (DELETE AFTER FIRST USE)
+# ============================
+@app.route('/create-product-cache-table-migration-xyz123')
+def create_product_cache_table():
+    """
+    ONE-TIME MIGRATION: Creates the ProductDataCache table.
+    Visit this URL once, then DELETE this route from the code.
+    """
+    try:
+        with app.app_context():
+            # Create the table if it doesn't exist
+            ProductDataCache.__table__.create(db.engine, checkfirst=True)
+            return jsonify({
+                'success': True, 
+                'message': 'ProductDataCache table created successfully! You can now delete this endpoint from app.py'
+            })
+    except Exception as e:
+        return jsonify({
+            'success': False, 
+            'error': str(e)
+        }), 500
+
+
+# ============================
 # Main
 # ============================
 if __name__ == '__main__':
