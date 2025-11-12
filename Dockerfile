@@ -19,6 +19,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# Make start script executable
+RUN chmod +x start.sh
+
 # Create instance directory for SQLite (if nseeded)
 RUN mkdir -p instance
 
@@ -26,6 +29,5 @@ RUN mkdir -p instance
 ENV FLASK_APP=app/app.py
 ENV PYTHONUNBUFFERED=1
 
-# Run the application using gunicorn for production
-# Use sh -c to ensure $PORT variable expansion
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app.app:app"]
+# Run the application using startup script
+CMD ["./start.sh"]
