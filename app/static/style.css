@@ -1272,6 +1272,8 @@ button:hover {
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-select-checkbox {
@@ -1317,6 +1319,9 @@ button:hover {
 
 .product-info {
     padding: 1em;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .product-name {
@@ -1382,6 +1387,20 @@ button:hover {
 .store-unit { 
 	color: #666; 
 	font-size: 0.85em; 
+}
+
+.product-updated {
+    margin-top: auto;
+    padding-top: 1em;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.8em;
+    color: #999;
+    text-align: center;
+    background: linear-gradient(to top, #f9f9fb 0%, transparent 100%);
+    padding: 0.75em 0.5em 0.5em;
+    margin-left: -1em;
+    margin-right: -1em;
+    margin-bottom: -1em;
 }
 
 .nutrition-table, .allergens-list {

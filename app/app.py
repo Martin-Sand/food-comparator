@@ -1666,31 +1666,9 @@ def find_products():
                 products = data.get('data', [])
                 links = data.get('links', {})
                 
-                # Calculate cutoff date (6 months ago from now)
-                from datetime import timezone
-                six_months_ago = datetime.now(timezone.utc) - timedelta(days=180)
-                
                 # Add current page products (including last page)
                 for product in products:
                     ean = product.get('ean')
-                    
-                    # Filter out products not updated in the last 6 months
-                    updated_at = product.get('updated_at')
-                    if updated_at:
-                        try:
-                            # Parse the ISO format timestamp (e.g., "2024-05-05T21:12:54.000000Z")
-                            # Remove the 'Z' and parse, then make it UTC aware
-                            updated_date_str = updated_at.rstrip('Z')
-                            updated_date = datetime.fromisoformat(updated_date_str).replace(tzinfo=timezone.utc)
-                            # Skip if too old
-                            if updated_date < six_months_ago:
-                                print(f"Skipping old product: {product.get('name')} (updated: {updated_at})")
-                                continue
-                        except (ValueError, AttributeError) as e:
-                            # If we can't parse the date, include the product (don't be too strict)
-                            print(f"Could not parse date for {product.get('name')}: {updated_at} - {e}")
-                            pass
-                    # If no updated_at field, still include the product
                     
                     # Get store info - API returns store as a single object (not array)
                     store = product.get('store')
@@ -1732,6 +1710,7 @@ def find_products():
                             'weight_unit': product.get('weight_unit'),
                             'image': product.get('image'),
                             'url': product.get('url'),
+                            'updated_at': product.get('updated_at'),  # Add last updated date
                             'nutrition': {
                                 item['code']: {
                                     'amount': item['amount'],

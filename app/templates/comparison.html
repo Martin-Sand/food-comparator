@@ -6,6 +6,7 @@
     <title>Product Comparison</title>
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 </head>
 <body>
     <!-- Global Header -->
@@ -107,6 +108,16 @@
                         <button class="dropdown-btn" id="filter-dropdown-btn">🔍 Filter Options ▾</button>
                         <div class="dropdown-content" id="filter-dropdown">
                             <button id="hide-no-nutrition">Hide No Nutrition</button>
+                            <div style="padding: 8px 12px; border-top: 1px solid #e0e0e0;">
+                                <label for="updated-date-filter" style="display: block; margin-bottom: 4px; font-size: 13px; color: #666;">Last Updated:</label>
+                                <select id="updated-date-filter" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                                    <option value="all">All products</option>
+                                    <option value="1">Within 1 month</option>
+                                    <option value="3">Within 3 months</option>
+                                    <option value="6">Within 6 months</option>
+                                    <option value="12">Within 1 year</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

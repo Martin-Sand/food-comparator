@@ -35,6 +35,11 @@ function showToast(message, type = 'info', duration = 5000) {
     }, duration);
 }
 
+// Register Chart.js datalabels plugin if available
+if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+}
+
 // State management
 // Check if productsData was already set by the page (for shared comparisons)
 let productsData = window.productsData || null;
@@ -46,7 +51,8 @@ let currentFilters = {
     showNutrition: true, // Show nutrition by default
     showAllergens: false,
     showCharts: false, // Pie charts hidden by default
-    hideNoNutrition: false // Don't hide products without nutrition by default
+    hideNoNutrition: false, // Don't hide products without nutrition by default
+    updatedWithinMonths: null // Filter by last updated date (null = no filter)
 };
 // Matrix sorting state: which nutrient column and direction
 window.matrixSort = null; // { code: 'protein', direction: 'desc' | 'asc' }
@@ -69,6 +75,7 @@ function attachFilterListeners() {
     const toggleAllergensEl = document.getElementById('toggle-allergens');
     const toggleChartsEl = document.getElementById('toggle-charts');
     const hideNoNutritionEl = document.getElementById('hide-no-nutrition');
+    const updatedDateFilterEl = document.getElementById('updated-date-filter');
 
     if (searchEl) {
         searchEl.addEventListener('input', (e) => {
@@ -80,6 +87,14 @@ function attachFilterListeners() {
     if (sortEl) {
         sortEl.addEventListener('change', (e) => {
             currentFilters.sortBy = e.target.value;
+            renderProducts();
+        });
+    }
+    
+    if (updatedDateFilterEl) {
+        updatedDateFilterEl.addEventListener('change', (e) => {
+            const value = e.target.value;
+            currentFilters.updatedWithinMonths = value === 'all' ? null : parseInt(value);
             renderProducts();
         });
     }
@@ -116,7 +131,8 @@ function attachFilterListeners() {
             currentFilters.showCharts = !currentFilters.showCharts;
             e.target.classList.toggle('active');
             if (productsData) {
-                renderCategorySummary(getFilteredAndSortedProducts());
+                // Re-render products which will also update the summary with grouped products
+                renderProducts();
             }
             renderMyProductBox(userProduct);
         });
@@ -404,6 +420,22 @@ function getFilteredAndSortedProducts() {
             (p.brand && p.brand.toLowerCase().includes(currentFilters.search))
         );
     }
+    
+    // Apply updated date filter
+    if (currentFilters.updatedWithinMonths !== null) {
+        const cutoffDate = new Date();
+        cutoffDate.setMonth(cutoffDate.getMonth() - currentFilters.updatedWithinMonths);
+        
+        products = products.filter(p => {
+            if (!p.updated_at) return false;
+            try {
+                const productDate = new Date(p.updated_at);
+                return productDate >= cutoffDate;
+            } catch (e) {
+                return false;
+            }
+        });
+    }
 
     // Note: Nutrition filter is applied after grouping in renderProducts()
     // because we need to check if the group has nutrition data, not individual stores
@@ -451,6 +483,7 @@ function groupProductsByEAN(products) {
                 image: null,
                 nutrition: {},
                 allergens: p.allergens || null,
+                updated_at: p.updated_at || null,
                 storesByName: new Map(),
                 ids: new Set()
             });
@@ -466,23 +499,29 @@ function groupProductsByEAN(products) {
         // Keep first brand if not set
         if (!g.brand && p.brand) g.brand = p.brand;
         
+        // Keep updated_at from first product (or prefer most recent if available)
+        if (p.updated_at) {
+            if (!g.updated_at || (new Date(p.updated_at) > new Date(g.updated_at))) {
+                g.updated_at = p.updated_at;
+            }
+        }
+        
         // Always prefer nutrition data with actual non-zero values
+        // Prefer the variant with the most complete nutrition data
         if (p.nutrition) {
-            const pNutritionCount = Object.keys(p.nutrition).length;
-            const gNutritionCount = Object.keys(g.nutrition || {}).length;
-            
             // Count non-zero nutrition values in new product
-            const pHasValues = pNutritionCount > 0 && Object.values(p.nutrition).some(n => 
+            const pNonZeroCount = Object.values(p.nutrition).filter(n => 
                 n && typeof n === 'object' && n.amount && n.amount > 0
-            );
-            // Count non-zero nutrition values in existing group
-            const gHasValues = gNutritionCount > 0 && Object.values(g.nutrition || {}).some(n => 
-                n && typeof n === 'object' && n.amount && n.amount > 0
-            );
+            ).length;
             
-            // Use p.nutrition ONLY if it has values AND (g has no nutrition OR g has no values)
-            // Never replace good nutrition with empty nutrition
-            if (pHasValues && (!g.nutrition || !gHasValues)) {
+            // Count non-zero nutrition values in existing group
+            const gNonZeroCount = Object.values(g.nutrition || {}).filter(n => 
+                n && typeof n === 'object' && n.amount && n.amount > 0
+            ).length;
+            
+            // Use p.nutrition if it has more non-zero values than what we currently have
+            // This ensures we always keep the most complete nutrition data
+            if (pNonZeroCount > gNonZeroCount) {
                 g.nutrition = p.nutrition;
             }
         }
@@ -526,6 +565,7 @@ function groupProductsByEAN(products) {
             image: g.image,
             nutrition: g.nutrition,
             allergens: g.allergens,
+            updated_at: g.updated_at,
             stores: Array.from(g.storesByName.values()),
             ids: Array.from(g.ids)
         };
@@ -566,6 +606,12 @@ function renderProducts() {
     
     // Group by EAN and sort according to current filter
     let groups = groupProductsByEAN(products);
+    
+    // Debug logging for product counts
+    console.log(`=== Product Count Debug ===`);
+    console.log(`Raw products from API: ${products.length}`);
+    console.log(`After grouping by EAN: ${groups.length} unique products`);
+    
     groups.forEach(g => {
         g.minPrice = Math.min(...g.stores.map(s => s.price || Infinity));
         g.minUnitPrice = Math.min(...g.stores.map(s => s.unit_price || Infinity));
@@ -630,6 +676,7 @@ function renderProducts() {
                 ${currentFilters.showNutrition ? renderNutrition(group.nutrition) : ''}
                 ${currentFilters.showAllergens && group.allergens ? renderAllergens(group.allergens) : ''}
                 ${userProduct ? renderComparisonBadges(group.nutrition, userProduct.nutrition) : ''}
+                ${group.updated_at ? `<div class="product-updated">Last updated: ${formatDate(group.updated_at)}</div>` : ''}
             </div>
         </div>
     `).join('');
@@ -727,10 +774,27 @@ function renderCategorySummary(groups) {
         unitCount.forEach((c, u) => { if (c > maxC) { maxC = c; bestUnit = u; }});
         const filtered = vals.filter(v => v.unit === bestUnit);
         const avg = filtered.reduce((a, v) => a + v.amount, 0) / filtered.length;
-        return { code, amount: avg, unit: bestUnit };
+        return { code, amount: avg, unit: bestUnit, count: filtered.length };
     }).filter(Boolean);
+    
+    // Debug logging for nutrition calculation
+    console.log(`=== Summary Calculation ===`);
+    console.log(`Total unique products (by EAN): ${groups.length}`);
+    if (avgNut.length > 0) {
+        const productsWithNutrition = groups.filter(g => {
+            const nut = g.nutrition || {};
+            return Object.keys(nut).length > 0;
+        }).length;
+        console.log(`Products with nutrition data: ${productsWithNutrition}`);
+        console.log(`Products used for each nutrient:`, avgNut.reduce((acc, n) => {
+            acc[n.code] = n.count;
+            return acc;
+        }, {}));
+    }
+    console.log(`This should match the number of product cards you see on the page: ${groups.length}`);
 
-    const header = `<div class="summary-title">Summary for ${groups.length} product${groups.length!==1?'s':''}</div>`;
+
+    const header = `<div class="summary-title">Summary for ${groups.length} product${groups.length!==1?'s':''} <span style="font-size: 0.85em; color: #888; font-weight: normal;">(same as displayed below)</span></div>`;
     const stats = `
         <div class="summary-grid">
             <div class="summary-item">
@@ -1163,6 +1227,7 @@ function renderMatrix() {
     if (matrixOptions.showAllergens) {
         headerCells.push('<th class="allergen-col">Allergens</th>');
     }
+    headerCells.push('<th class="updated-col">Last Updated</th>');
 
     // Build rows for grouped products
     const rowsHtml = groups.map(group => {
@@ -1205,6 +1270,9 @@ function renderMatrix() {
             prow.push(`<td class="allergen-col"><small>${allergenList || '-'}</small></td>`);
         }
         
+        // Add last updated column
+        prow.push(`<td class="updated-col"><small>${formatDate(group.updated_at)}</small></td>`);
+        
         return `<tr>${prow.join('')}</tr>`;
     }).join('');
 
@@ -1229,6 +1297,8 @@ function renderMatrix() {
         if (matrixOptions.showAllergens) {
             cells.push('<td class="allergen-col"><small>-</small></td>');
         }
+        
+        cells.push('<td class="updated-col"><small>-</small></td>');
         
         return `<tr class="my-product-row">${cells.join('')}</tr>`;
     })();
@@ -1262,6 +1332,16 @@ function formatPrice(price) {
 
 function formatUnitPrice(price, unit) {
     return price ? `kr ${price.toFixed(2)}/${unit || 'kg'}` : '';
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('no-NO', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (e) {
+        return 'N/A';
+    }
 }
 
 function renderNutrition(nutrition) {
@@ -1433,12 +1513,32 @@ function renderNutritionPieChart(avgNut, userNut) {
         options: {
             responsive: true,
             maintainAspectRatio: true,
+            layout: {
+                padding: 20
+            },
             plugins: {
                 legend: {
-                    position: 'bottom',
+                    display: true,
+                    position: 'right',
                     labels: {
-                        padding: 15,
-                        font: { size: 12 }
+                        padding: 12,
+                        font: { size: 13 },
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map((label, i) => {
+                                    const value = data.datasets[0].data[i];
+                                    const unit = chartData[i].unit || 'g';
+                                    return {
+                                        text: `${label}: ${value.toFixed(1)} ${unit}`,
+                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                        hidden: false,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
                     }
                 },
                 tooltip: {
@@ -1450,9 +1550,13 @@ function renderNutritionPieChart(avgNut, userNut) {
                             return `${label}: ${value.toFixed(1)} ${unit}`;
                         }
                     }
+                },
+                datalabels: {
+                    display: false
                 }
             }
-        }
+        },
+        plugins: [ChartDataLabels]
     });
 }
 
@@ -1507,12 +1611,32 @@ function renderMyProductSummaryChart(entries) {
         options: {
             responsive: true,
             maintainAspectRatio: true,
+            layout: {
+                padding: 20
+            },
             plugins: {
                 legend: {
-                    position: 'bottom',
+                    display: true,
+                    position: 'right',
                     labels: {
-                        padding: 15,
-                        font: { size: 12 }
+                        padding: 12,
+                        font: { size: 13 },
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map((label, i) => {
+                                    const value = data.datasets[0].data[i];
+                                    const unit = chartData[i].unit || 'g';
+                                    return {
+                                        text: `${label}: ${value.toFixed(1)} ${unit}`,
+                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                        hidden: false,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
                     }
                 },
                 tooltip: {
@@ -1524,9 +1648,13 @@ function renderMyProductSummaryChart(entries) {
                             return `${label}: ${value.toFixed(1)} ${unit}`;
                         }
                     }
+                },
+                datalabels: {
+                    display: false
                 }
             }
-        }
+        },
+        plugins: [ChartDataLabels]
     });
 }
 
@@ -1538,6 +1666,10 @@ function exportMatrixToCSV() {
     }
 
     const products = getFilteredAndSortedProducts();
+    
+    // Group products by EAN to get unique products only
+    const groups = groupProductsByEAN(products);
+    
     const userNut = userProduct.nutrition || {};
     
     // Get the nutrition codes that are comparable
@@ -1555,13 +1687,15 @@ function exportMatrixToCSV() {
     let csv = '';
     
     // Header row
-    const headers = ['Product', 'Brand'].concat(codes.map(code => friendlyName(code)));
+    const headers = ['Product', 'Brand', 'Stores', 'Last Updated'].concat(codes.map(code => friendlyName(code)));
     csv += headers.map(h => `"${h}"`).join(',') + '\n';
     
     // My Product row (first)
     const myProductRow = [
         userProduct.name || 'My Product',
-        userProduct.description || ''
+        userProduct.description || '',
+        '-',
+        '-'
     ];
     codes.forEach(code => {
         const u = userNut[code];
@@ -1573,13 +1707,15 @@ function exportMatrixToCSV() {
     });
     csv += myProductRow.map(v => `"${v}"`).join(',') + '\n';
     
-    // Product rows
-    products.forEach(p => {
+    // Product rows (using grouped products)
+    groups.forEach(group => {
         const row = [
-            p.name || '',
-            p.brand || ''
+            group.name || '',
+            group.brand || '',
+            group.stores.map(s => s.store).join('; ') || '',
+            group.updated_at ? formatDate(group.updated_at) : '-'
         ];
-        const pNut = p.nutrition || {};
+        const pNut = group.nutrition || {};
         codes.forEach(code => {
             const u = userNut[code];
             const n = pNut[code];
@@ -1610,7 +1746,7 @@ function exportMatrixToCSV() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    console.log('Matrix exported to CSV:', filename);
+    console.log(`Matrix exported to CSV: ${filename} (${groups.length} unique products)`);
 }
 
 // (Price chart feature removed)
