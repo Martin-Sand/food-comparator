@@ -6,7 +6,7 @@
     <title>Profile - Compara</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body data-theme="{{ theme }}">
     <!-- Global Header -->
     <header class="global-header">
         <div class="header-content">
@@ -142,6 +142,24 @@
                         </div>
                     </div>
                 {% endif %}
+            </div>
+        </section>
+
+        <!-- Appearance Section -->
+        <section class="profile-section">
+            <h2>Appearance</h2>
+            <div class="profile-card">
+                <div class="form-group">
+                    <label for="theme-select">Theme</label>
+                    <div class="input-group">
+                        <select id="theme-select">
+                            <option value="light" {% if theme == 'light' %}selected{% endif %}>Light</option>
+                            <option value="dark" {% if theme == 'dark' %}selected{% endif %}>Dark</option>
+                        </select>
+                        <button id="update-theme-btn" class="btn btn-primary">Save Theme</button>
+                    </div>
+                    <small class="help-text">Saved to your profile</small>
+                </div>
             </div>
         </section>
         
@@ -294,6 +312,34 @@
                 console.error('Error:', error);
                 showToast('Error opening subscription management', 'error');
             }
+        }
+
+        // Update theme
+        const updateThemeBtn = document.getElementById('update-theme-btn');
+        if (updateThemeBtn) {
+            updateThemeBtn.addEventListener('click', async () => {
+                const theme = document.getElementById('theme-select')?.value;
+                if (!theme) return;
+
+                try {
+                    const response = await fetch('/api/update_profile', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ theme })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        document.body.dataset.theme = theme;
+                        showToast('Theme updated', 'success');
+                    } else {
+                        showToast(data.error || 'Failed to update theme', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating theme:', error);
+                    showToast('Failed to update theme', 'error');
+                }
+            });
         }
         
         // Delete account

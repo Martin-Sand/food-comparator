@@ -29,6 +29,7 @@ env/
 ENV/
 env.bak/
 venv.bak/
+.venv/
 
 # Environment Variables - CRITICAL: Never commit these!
 .env
@@ -36,12 +37,15 @@ venv.bak/
 .env.production
 app/.env
 *.env
+.flaskenv
+app/.flaskenv
 
 # Database
 *.db
 *.sqlite
 *.sqlite3
 instance/
+app/instance/
 
 # Flask
 instance/

@@ -173,6 +173,12 @@
             border-radius: 4px;
         }
 
+        .admin-empty {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
         .toast {
             position: fixed;
             bottom: 20px;
@@ -196,9 +202,81 @@
                 opacity: 1;
             }
         }
+
+        body[data-theme="dark"] .admin-header h1 {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .admin-nav {
+            border-bottom-color: #1f2937;
+        }
+
+        body[data-theme="dark"] .admin-nav a {
+            color: #cbd5e1;
+        }
+
+        body[data-theme="dark"] .admin-nav a:hover {
+            background: #111827;
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .section {
+            background: #0f172a;
+            box-shadow: none;
+        }
+
+        body[data-theme="dark"] .section-title {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .links-table th {
+            background: #0b1220;
+            color: #94a3b8;
+            border-bottom-color: #1f2937;
+        }
+
+        body[data-theme="dark"] .links-table th a {
+            color: #cbd5e1;
+        }
+
+        body[data-theme="dark"] .links-table th a:hover {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .links-table td {
+            border-bottom-color: #1f2937;
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .links-table tr:hover {
+            background: #111827;
+        }
+
+        body[data-theme="dark"] .link-info {
+            color: #94a3b8;
+        }
+
+        body[data-theme="dark"] .token-display {
+            background: #0b1220;
+            color: #cbd5e1;
+        }
+
+        body[data-theme="dark"] .admin-empty {
+            color: #94a3b8;
+        }
+
+        body[data-theme="dark"] .badge.active {
+            background: #14532d;
+            color: #bbf7d0;
+        }
+
+        body[data-theme="dark"] .badge.inactive {
+            background: #3b0a0a;
+            color: #fecaca;
+        }
     </style>
 </head>
-<body>
+<body data-theme="{{ theme }}">
     <!-- Global Header -->
     <header class="global-header">
         <div class="header-content">
@@ -298,7 +376,7 @@
             </table>
 
             {% if not shared_links %}
-            <div style="text-align: center; padding: 40px; color: #718096;">
+            <div class="admin-empty">
                 No shared comparisons yet.
             </div>
             {% endif %}

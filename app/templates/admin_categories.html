@@ -127,6 +127,14 @@
             background: #3182ce;
         }
 
+        .search-button.secondary {
+            background: #718096;
+        }
+
+        .search-button.secondary:hover {
+            background: #4a5568;
+        }
+
         .info-box {
             background: #ebf8ff;
             border-left: 4px solid #4299e1;
@@ -259,6 +267,86 @@
             background: #e53e3e;
         }
 
+        body[data-theme="dark"] .admin-header h1 {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .admin-nav {
+            border-bottom-color: #1f2937;
+        }
+
+        body[data-theme="dark"] .admin-nav a {
+            color: #cbd5e1;
+        }
+
+        body[data-theme="dark"] .admin-nav a:hover {
+            background: #111827;
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .section {
+            background: #0f172a;
+            box-shadow: none;
+        }
+
+        body[data-theme="dark"] .section-title {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .stat-box {
+            background: #0b1220;
+        }
+
+        body[data-theme="dark"] .stat-box-label {
+            color: #94a3b8;
+        }
+
+        body[data-theme="dark"] .stat-box-value {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .search-input {
+            background: #0b1220;
+            color: #e5e7eb;
+            border-color: #334155;
+        }
+
+        body[data-theme="dark"] .info-box {
+            background: #0b1220;
+            color: #cbd5e1;
+            border-left-color: #334155;
+        }
+
+        body[data-theme="dark"] .info-box strong {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .category-header:hover {
+            background: #111827;
+        }
+
+        body[data-theme="dark"] .toggle-icon {
+            color: #94a3b8;
+        }
+
+        body[data-theme="dark"] .category-name {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .category-name.inactive {
+            color: #64748b;
+        }
+
+        body[data-theme="dark"] .category-badge.active {
+            background: #14532d;
+            color: #bbf7d0;
+        }
+
+        body[data-theme="dark"] .category-badge.inactive {
+            background: #3b0a0a;
+            color: #fecaca;
+        }
+
         .action-button.success {
             background: #48bb78;
         }
@@ -314,7 +402,7 @@
         }
     </style>
 </head>
-<body>
+<body data-theme="{{ theme }}">
     <!-- Global Header -->
     <header class="global-header">
         <div class="header-content">
@@ -373,7 +461,7 @@
                 <input type="text" name="search" class="search-input" placeholder="Search by category name..." value="{{ search }}">
                 <button type="submit" class="search-button">Search</button>
                 {% if search %}
-                <a href="/admin/categories" class="search-button" style="background: #718096;">Clear</a>
+                <a href="/admin/categories" class="search-button secondary">Clear</a>
                 {% endif %}
             </form>
 

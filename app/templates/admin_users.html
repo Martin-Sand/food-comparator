@@ -98,6 +98,17 @@
             background: #3182ce;
         }
 
+        .search-button.secondary {
+            background: #718096;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-button.secondary:hover {
+            background: #4a5568;
+        }
+
         .users-table {
             width: 100%;
             border-collapse: collapse;
@@ -155,6 +166,12 @@
         .badge.cancelled {
             background: #e2e8f0;
             color: #4a5568;
+        }
+
+        .badge.admin {
+            background: #9f7aea;
+            color: white;
+            margin-top: 4px;
         }
 
         .action-button {
@@ -217,9 +234,83 @@
             font-size: 13px;
             color: #718096;
         }
+
+        body[data-theme="dark"] .admin-header h1 {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .admin-nav {
+            border-bottom-color: #1f2937;
+        }
+
+        body[data-theme="dark"] .admin-nav a {
+            color: #cbd5e1;
+        }
+
+        body[data-theme="dark"] .admin-nav a:hover {
+            background: #111827;
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .section {
+            background: #0f172a;
+            box-shadow: none;
+        }
+
+        body[data-theme="dark"] .section-title {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .search-input {
+            background: #0b1220;
+            color: #e5e7eb;
+            border-color: #334155;
+        }
+
+        body[data-theme="dark"] .users-table th {
+            background: #0b1220;
+            color: #94a3b8;
+            border-bottom-color: #1f2937;
+        }
+
+        body[data-theme="dark"] .users-table th a {
+            color: #cbd5e1;
+        }
+
+        body[data-theme="dark"] .users-table th a:hover {
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .users-table td {
+            border-bottom-color: #1f2937;
+            color: #e5e7eb;
+        }
+
+        body[data-theme="dark"] .users-table tr:hover {
+            background: #111827;
+        }
+
+        body[data-theme="dark"] .user-stats {
+            color: #94a3b8;
+        }
+
+        body[data-theme="dark"] .badge.premium {
+            background: #14532d;
+            color: #bbf7d0;
+        }
+
+        body[data-theme="dark"] .badge.free {
+            background: #3b0a0a;
+            color: #fecaca;
+        }
+
+        body[data-theme="dark"] .badge.cancelled {
+            background: #0b1220;
+            color: #94a3b8;
+        }
     </style>
 </head>
-<body>
+<body data-theme="{{ theme }}">
     <!-- Global Header -->
     <header class="global-header">
         <div class="header-content">
@@ -263,7 +354,7 @@
                 <input type="text" name="search" class="search-input" placeholder="Search by email..." value="{{ search }}">
                 <button type="submit" class="search-button">Search</button>
                 {% if search %}
-                <a href="/admin/users" class="search-button" style="background: #718096; text-decoration: none; display: flex; align-items: center;">Clear</a>
+                <a href="/admin/users" class="search-button secondary">Clear</a>
                 {% endif %}
             </form>
 
@@ -295,7 +386,7 @@
                         <td>
                             <div>{{ user.email }}</div>
                             {% if user.is_admin %}
-                            <span class="badge" style="background: #9f7aea; color: white; margin-top: 4px;">Admin</span>
+                            <span class="badge admin">Admin</span>
                             {% endif %}
                         </td>
                         <td>

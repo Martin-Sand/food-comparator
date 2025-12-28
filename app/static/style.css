@@ -496,6 +496,460 @@ body {
 	padding: 0;
 }
 
+/* ==========================
+   Theme: Dark Mode Overrides
+   ========================== */
+body[data-theme="dark"] {
+	background: #0b1020;
+	color: #e5e7eb;
+	color-scheme: dark;
+}
+
+body[data-theme="dark"] .container {
+	background: #0f172a;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] h1,
+body[data-theme="dark"] h2,
+body[data-theme="dark"] h3,
+body[data-theme="dark"] label,
+body[data-theme="dark"] .info-label {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .help-text,
+body[data-theme="dark"] .info-value {
+	color: #cbd5e1;
+}
+
+body[data-theme="dark"] input,
+body[data-theme="dark"] select,
+body[data-theme="dark"] textarea {
+	background: #0b1220;
+	color: #e5e7eb;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] .profile-card,
+body[data-theme="dark"] .product-card,
+body[data-theme="dark"] .saved-search-card,
+body[data-theme="dark"] .auth-container,
+body[data-theme="dark"] .toast {
+	background: #0f172a;
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .toast {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+body[data-theme="dark"] .mode-tab {
+	background: #0b1220;
+	border-color: #334155;
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .mode-tab:hover {
+	background: #111827;
+	border-color: #475569;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .tab-label {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .tab-description {
+	color: #cbd5e1;
+}
+
+body[data-theme="dark"] .usage-card {
+	background: #0f172a;
+	border-color: #334155;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .dropdown-btn {
+	background: #0b1220;
+	color: #e5e7eb;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] .dropdown-btn:hover {
+	background: #111827;
+	border-color: #475569;
+}
+
+body[data-theme="dark"] .dropdown-content {
+	background-color: #0f172a;
+	border: 1px solid #1f2937;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+body[data-theme="dark"] .dropdown-content button {
+	background: transparent;
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .dropdown-content button:hover,
+body[data-theme="dark"] .saved-search-item:hover {
+	background: #111827;
+}
+
+body[data-theme="dark"] .view-controls button {
+	background: #0b1220;
+	color: #e5e7eb;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] .view-controls button:hover {
+	background: #111827;
+	border-color: #475569;
+}
+
+body[data-theme="dark"] .view-controls button.active {
+	border-color: #6a82fb;
+}
+
+body[data-theme="dark"] .secondary-btn {
+	background: #111827;
+	color: #e5e7eb;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] .secondary-btn:hover {
+	background: #0b1220;
+}
+
+body[data-theme="dark"] .macro-cluster {
+	background: #0f172a;
+	border-color: #334155;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .macro-cluster:hover {
+	border-color: #475569;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .macro-cluster-header {
+	color: #93c5fd;
+}
+
+body[data-theme="dark"] .info-item {
+	background: #0b1220;
+	border-color: #334155;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .info-item:hover {
+	border-color: #475569;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .btn-secondary {
+	background: #111827;
+	color: #e5e7eb;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] .btn-secondary:hover:not(:disabled) {
+	background: #0b1220;
+	border-color: #475569;
+}
+
+body[data-theme="dark"] .tree-checkbox {
+	color-scheme: dark;
+	accent-color: #93c5fd;
+}
+
+body[data-theme="dark"] .product-image-box,
+body[data-theme="dark"] .product-image-placeholder {
+	background: #0b1220;
+	border-bottom-color: #1f2937;
+}
+
+body[data-theme="dark"] .product-name {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .product-brand,
+body[data-theme="dark"] .product-store,
+body[data-theme="dark"] .product-unit-price,
+body[data-theme="dark"] .product-updated {
+	color: #94a3b8;
+}
+
+body[data-theme="dark"] .store-row {
+	background: #0b1220;
+	border-color: #1f2937;
+}
+
+body[data-theme="dark"] .store-name {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .store-price {
+	color: #93c5fd;
+}
+
+body[data-theme="dark"] .product-updated {
+	border-top-color: #1f2937;
+	background: none;
+}
+
+body[data-theme="dark"] .nutrition-table,
+body[data-theme="dark"] .allergens-list {
+	border-top-color: #1f2937;
+}
+
+body[data-theme="dark"] .modal-content {
+	background: #0f172a;
+}
+
+body[data-theme="dark"] .modal-header,
+body[data-theme="dark"] .modal-footer,
+body[data-theme="dark"] .modal-tabs {
+	border-color: #1f2937;
+}
+
+body[data-theme="dark"] .modal-header h3 {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .modal-close {
+	color: #cbd5e1;
+}
+
+body[data-theme="dark"] .modal-close:hover {
+	background: #111827;
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .modal-body p {
+	color: #cbd5e1;
+}
+
+body[data-theme="dark"] .modal-body textarea {
+	background: #0b1220;
+	color: #e5e7eb;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] .modal-cancel {
+	background: #111827;
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .modal-cancel:hover {
+	background: #0b1220;
+}
+
+body[data-theme="dark"] .modal-tab {
+	color: #94a3b8;
+}
+
+body[data-theme="dark"] .modal-tab:hover {
+	color: #e5e7eb;
+	background: #111827;
+}
+
+body[data-theme="dark"] .modal-tab.active {
+	color: #93c5fd;
+}
+
+body[data-theme="dark"] .matrix-table th,
+body[data-theme="dark"] .matrix-table .product-col {
+	background: #0b1220;
+}
+
+body[data-theme="dark"] .matrix-table th,
+body[data-theme="dark"] .matrix-table td {
+	border-color: #1f2937;
+}
+
+body[data-theme="dark"] .cell-better { background: #052e1a; color: #86efac; }
+body[data-theme="dark"] .cell-worse { background: #3b0a0a; color: #fca5a5; }
+body[data-theme="dark"] .cell-na { background: #0b1220; color: #94a3b8; }
+body[data-theme="dark"] .my-product-row,
+body[data-theme="dark"] .my-product-row .product-col {
+	background: #0f1b33;
+}
+
+body[data-theme="dark"] #additional-categories {
+	background: #0b1220;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] #comparison-table {
+	background: #0f172a;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .collapsible-section {
+	background: #0f172a;
+	border-color: #1f2937;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .collapsible-header {
+	border-bottom-color: #1f2937;
+}
+
+body[data-theme="dark"] .collapsible-header:hover {
+	background: #111827;
+}
+
+body[data-theme="dark"] .collapsible-header h2 {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .collapse-arrow {
+	color: #93c5fd;
+}
+
+body[data-theme="dark"] .categories-summary,
+body[data-theme="dark"] .summary-item {
+	background: #0b1220;
+	border-color: #1f2937;
+}
+
+body[data-theme="dark"] .summary-item {
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .category-tree-view {
+	background: #0f172a;
+	border-color: #1f2937;
+}
+
+body[data-theme="dark"] .tree-container {
+	background: transparent;
+}
+
+body[data-theme="dark"] .tree-search input {
+	background: #0b1220;
+	color: #e5e7eb;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] .tree-item-content:hover {
+	background: #111827;
+}
+
+body[data-theme="dark"] .expand-icon {
+	color: #94a3b8;
+}
+
+body[data-theme="dark"] .tree-item-name {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .tree-children {
+	border-left-color: #1f2937;
+}
+
+body[data-theme="dark"] .add-categories-btn {
+	border-top-color: #1f2937;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .add-categories-btn:hover {
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .nutrition-group {
+	background: #0f172a;
+	border-color: #334155;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .nutrition-fields label {
+	color: #cbd5e1;
+}
+
+body[data-theme="dark"] .nutrition-fields input[type="number"] {
+	background: #0b1220;
+	color: #e5e7eb;
+	border-color: #334155;
+}
+
+body[data-theme="dark"] .nutrition-display {
+	border-top-color: #1f2937;
+}
+
+body[data-theme="dark"] .nutrition-header h4 {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .nutrition-serving {
+	color: #94a3b8;
+}
+
+body[data-theme="dark"] .nutrition-list {
+	background: #0f172a;
+	border-color: #1f2937;
+}
+
+body[data-theme="dark"] .nutrition-row {
+	border-bottom-color: #1f2937;
+}
+
+body[data-theme="dark"] .nutrition-row:hover {
+	background: #111827;
+}
+
+body[data-theme="dark"] .nutrition-row-macro {
+	background: #0b1220;
+}
+
+body[data-theme="dark"] .nutrition-row-macro .nutrition-label,
+body[data-theme="dark"] .nutrition-row-macro .nutrition-value {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .nutrition-label {
+	color: #cbd5e1;
+}
+
+body[data-theme="dark"] .nutrition-value {
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .nutrition-expand-arrow {
+	color: #94a3b8;
+}
+
+body[data-theme="dark"] .unit-option {
+	background: #0b1220;
+	border-color: #334155;
+	color: #e5e7eb;
+}
+
+body[data-theme="dark"] .unit-option:hover {
+	background: #111827;
+	border-color: #475569;
+}
+
+body[data-theme="dark"] .unit-option input[type="radio"] {
+	accent-color: #93c5fd;
+}
+
+body[data-theme="dark"] .unit-option input[type="radio"]:checked + span {
+	color: #93c5fd;
+}
+
+body[data-theme="dark"] .unit-option:has(input[type="radio"]:checked) {
+	border-color: #93c5fd;
+	background: #0f1b33;
+	box-shadow: none;
+}
+
+body[data-theme="dark"] a {
+	color: inherit;
+}
+
 .container {
 	background: #fff;
 	padding: 2em 2.5em;

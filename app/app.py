@@ -79,6 +79,20 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message = None  # Don't show flash message on redirect
 
+
+@app.context_processor
+def inject_theme():
+    """Expose the active theme to all templates as `theme`."""
+    theme = 'light'
+    try:
+        if current_user.is_authenticated:
+            candidate = getattr(current_user, 'theme', None)
+            if candidate in ('light', 'dark'):
+                theme = candidate
+    except Exception:
+        pass
+    return {'theme': theme}
+
 # ============================
 # Database Models
 # ============================
@@ -102,6 +116,9 @@ class User(UserMixin, db.Model):
     subscription_status = db.Column(db.String(20), default='free')  # free, active, cancelled
     subscription_end_date = db.Column(db.DateTime, nullable=True)
     stripe_customer_id = db.Column(db.String(100), nullable=True)
+
+    # UI preferences
+    theme = db.Column(db.String(10), default='light', nullable=False)
     
     # Usage tracking for free users
     explore_count = db.Column(db.Integer, default=0)
@@ -616,14 +633,25 @@ def update_password():
 @app.route('/api/update_profile', methods=['POST'])
 @login_required
 def update_profile():
-    """Update user profile information (name and phone)."""
+    """Update user profile information (name, phone, and preferences)."""
     try:
-        data = request.get_json()
-        name = data.get('name', '').strip()
-        phone_number = data.get('phone_number', '').strip()
-        
-        current_user.name = name if name else None
-        current_user.phone_number = phone_number if phone_number else None
+        data = request.get_json() or {}
+
+        # Only update fields that were provided (so theme updates don't wipe name/phone, etc.)
+        if 'name' in data:
+            name = (data.get('name') or '').strip()
+            current_user.name = name if name else None
+
+        if 'phone_number' in data:
+            phone_number = (data.get('phone_number') or '').strip()
+            current_user.phone_number = phone_number if phone_number else None
+
+        if 'theme' in data:
+            theme = (data.get('theme') or '').strip().lower()
+            if theme not in ('light', 'dark'):
+                return jsonify({'success': False, 'error': 'Invalid theme'}), 400
+            current_user.theme = theme
+
         db.session.commit()
         
         return jsonify({'success': True, 'message': 'Profile updated successfully'})
