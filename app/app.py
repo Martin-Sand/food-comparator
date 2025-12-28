@@ -4,7 +4,7 @@ import json
 import time
 from collections import defaultdict, deque
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash, abort
 from dotenv import load_dotenv
@@ -18,7 +18,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
+from flask_mail import Mail, Message
 import stripe
+import random
+import string
 
 # Load environment variables from .env file
 load_dotenv()
@@ -59,6 +62,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# Email Configuration
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True') == 'True'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', os.environ.get('MAIL_USERNAME'))
+mail = Mail(app)
+
 # ============================
 # Authentication Configuration
 # ============================
@@ -76,8 +88,15 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(100), nullable=True)
+    phone_number = db.Column(db.String(20), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_admin = db.Column(db.Boolean, default=False)
+    
+    # Email verification fields
+    is_verified = db.Column(db.Boolean, default=False)
+    verification_code = db.Column(db.String(6), nullable=True)
+    verification_code_expires = db.Column(db.DateTime, nullable=True)
     
     # Subscription fields
     subscription_status = db.Column(db.String(20), default='free')  # free, active, cancelled
@@ -250,6 +269,57 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 # ============================
+# Email Verification Helper Functions
+# ============================
+def generate_verification_code():
+    """Generate a 6-digit verification code."""
+    return ''.join(random.choices(string.digits, k=6))
+
+def send_verification_email(user_email, code):
+    """Send verification code to user's email."""
+    try:
+        msg = Message(
+            'Verify Your Email - Compara',
+            recipients=[user_email]
+        )
+        msg.body = f'''Hello,
+
+Thank you for signing up for Compara!
+
+Your verification code is: {code}
+
+This code will expire in 15 minutes.
+
+If you didn't create an account, please ignore this email.
+
+Best regards,
+The Compara Team
+'''
+        msg.html = f'''
+<html>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #667eea;">Welcome to Compara!</h2>
+        <p>Thank you for signing up. To complete your registration, please verify your email address.</p>
+        
+        <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+            <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Your verification code is:</p>
+            <h1 style="margin: 0; font-size: 36px; color: #667eea; letter-spacing: 8px;">{code}</h1>
+        </div>
+        
+        <p style="color: #666; font-size: 14px;">This code will expire in 15 minutes.</p>
+        <p style="color: #999; font-size: 12px; margin-top: 30px;">If you didn't create an account, please ignore this email.</p>
+    </div>
+</body>
+</html>
+'''
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Error sending verification email: {e}")
+        return False
+
+# ============================
 # Authentication Routes
 # ============================
 @app.route('/register', methods=['GET', 'POST'])
@@ -289,19 +359,39 @@ def register():
             flash('Email already registered. Please log in.', 'error')
             return render_template('register.html')
         
-        # Create new user
-        user = User(email=email)
+        # Generate verification code
+        verification_code = generate_verification_code()
+        code_expires = datetime.utcnow() + timedelta(minutes=15)
+        
+        # Create new user (not verified yet)
+        user = User(
+            email=email,
+            is_verified=False,
+            verification_code=verification_code,
+            verification_code_expires=code_expires
+        )
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
         
-        # Log them in automatically
-        login_user(user)
-        
-        if request.is_json:
-            return jsonify({'success': True, 'message': 'Registration successful'})
-        flash('Registration successful! Welcome!', 'success')
-        return redirect(url_for('index'))
+        # Send verification email
+        if send_verification_email(email, verification_code):
+            if request.is_json:
+                return jsonify({
+                    'success': True, 
+                    'message': 'Registration successful! Please check your email for the verification code.',
+                    'email': email
+                })
+            session['pending_verification_email'] = email
+            return redirect(url_for('verify_email'))
+        else:
+            # If email fails, delete the user and show error
+            db.session.delete(user)
+            db.session.commit()
+            if request.is_json:
+                return jsonify({'success': False, 'error': 'Failed to send verification email. Please try again.'}), 500
+            flash('Failed to send verification email. Please try again.', 'error')
+            return render_template('register.html')
     
     return render_template('register.html')
 
@@ -326,6 +416,14 @@ def login():
         user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(password):
+            # Check if user is verified
+            if not user.is_verified:
+                session['pending_verification_email'] = email
+                if request.is_json:
+                    return jsonify({'success': False, 'error': 'Please verify your email first', 'redirect': url_for('verify_email')}), 403
+                flash('Please verify your email before logging in. Check your inbox for the verification code.', 'warning')
+                return redirect(url_for('verify_email'))
+            
             login_user(user, remember=remember)
             next_page = request.args.get('next')
             if request.is_json:
@@ -346,6 +444,104 @@ def logout():
     logout_user()
     flash('You have been logged out', 'info')
     return redirect(url_for('index'))
+
+
+@app.route('/verify-email', methods=['GET', 'POST'])
+def verify_email():
+    """Email verification page."""
+    email = session.get('pending_verification_email')
+    
+    if not email:
+        flash('No pending verification found', 'error')
+        return redirect(url_for('register'))
+    
+    if request.method == 'POST':
+        data = request.get_json() if request.is_json else request.form
+        code = data.get('code', '').strip()
+        
+        if not code:
+            if request.is_json:
+                return jsonify({'success': False, 'error': 'Verification code is required'}), 400
+            flash('Please enter the verification code', 'error')
+            return render_template('verify_email.html', email=email)
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            if request.is_json:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            flash('User not found', 'error')
+            return redirect(url_for('register'))
+        
+        # Check if code matches and hasn't expired
+        if user.verification_code != code:
+            if request.is_json:
+                return jsonify({'success': False, 'error': 'Invalid verification code'}), 400
+            flash('Invalid verification code', 'error')
+            return render_template('verify_email.html', email=email)
+        
+        if datetime.utcnow() > user.verification_code_expires:
+            if request.is_json:
+                return jsonify({'success': False, 'error': 'Verification code has expired. Please request a new one.'}), 400
+            flash('Verification code has expired. Please request a new one.', 'error')
+            return render_template('verify_email.html', email=email)
+        
+        # Verify the user
+        user.is_verified = True
+        user.verification_code = None
+        user.verification_code_expires = None
+        db.session.commit()
+        
+        # Clear session and log them in
+        session.pop('pending_verification_email', None)
+        login_user(user)
+        
+        if request.is_json:
+            return jsonify({'success': True, 'message': 'Email verified successfully!'})
+        flash('Email verified successfully! Welcome to Compara!', 'success')
+        return redirect(url_for('index'))
+    
+    return render_template('verify_email.html', email=email)
+
+
+@app.route('/resend-verification', methods=['POST'])
+def resend_verification():
+    """Resend verification code."""
+    email = session.get('pending_verification_email')
+    
+    if not email:
+        if request.is_json:
+            return jsonify({'success': False, 'error': 'No pending verification found'}), 400
+        flash('No pending verification found', 'error')
+        return redirect(url_for('register'))
+    
+    user = User.query.filter_by(email=email).first()
+    
+    if not user:
+        if request.is_json:
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        flash('User not found', 'error')
+        return redirect(url_for('register'))
+    
+    # Generate new code
+    verification_code = generate_verification_code()
+    code_expires = datetime.utcnow() + timedelta(minutes=15)
+    
+    user.verification_code = verification_code
+    user.verification_code_expires = code_expires
+    db.session.commit()
+    
+    # Send email
+    if send_verification_email(email, verification_code):
+        if request.is_json:
+            return jsonify({'success': True, 'message': 'Verification code sent! Check your email.'})
+        flash('Verification code sent! Check your email.', 'success')
+    else:
+        if request.is_json:
+            return jsonify({'success': False, 'error': 'Failed to send verification email'}), 500
+        flash('Failed to send verification email. Please try again.', 'error')
+    
+    return redirect(url_for('verify_email'))
 
 
 # ============================
@@ -412,6 +608,53 @@ def update_password():
         db.session.commit()
         
         return jsonify({'success': True, 'message': 'Password updated successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/update_profile', methods=['POST'])
+@login_required
+def update_profile():
+    """Update user profile information (name and phone)."""
+    try:
+        data = request.get_json()
+        name = data.get('name', '').strip()
+        phone_number = data.get('phone_number', '').strip()
+        
+        current_user.name = name if name else None
+        current_user.phone_number = phone_number if phone_number else None
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Profile updated successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    """Delete user account with password confirmation."""
+    try:
+        data = request.get_json()
+        password = data.get('password', '')
+        
+        if not password:
+            return jsonify({'success': False, 'error': 'Password is required'}), 400
+        
+        # Verify password
+        if not current_user.check_password(password):
+            return jsonify({'success': False, 'error': 'Password is incorrect'}), 400
+        
+        # Delete the user (cascade will delete related records)
+        user_id = current_user.id
+        db.session.delete(current_user)
+        db.session.commit()
+        
+        logout_user()
+        
+        return jsonify({'success': True, 'message': 'Account deleted successfully'})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -1614,6 +1857,15 @@ def find_products():
     expanded_category_ids: Dict[str, str] = {}  # leaf_id -> pretty name path (best effort)
     for category in selected_categories:
         cid = str(category['id'])
+        
+        # Validate that cid is numeric (can be converted to int)
+        # Skip categories with non-numeric IDs (could be old saved search data with category names)
+        try:
+            int(cid)  # Test if it's a valid numeric ID
+        except ValueError:
+            print(f"Skipping invalid category ID (not numeric): {cid}")
+            continue
+        
         leaf_ids = get_leaf_descendants(cats_flat, cid)
         # if nothing returned (unknown id), just include original id
         if not leaf_ids:
@@ -1624,9 +1876,19 @@ def find_products():
             expanded_category_ids[lid] = origin_name
 
     leaf_id_list = list(expanded_category_ids.keys())
+    
+    # If no valid categories were found, return an error
+    if not leaf_id_list:
+        return jsonify({
+            'error': 'No valid categories found. Please re-select your categories and try again.',
+            'products': [],
+            'categories': []
+        }), 400
 
     # Process each (leaf) category id
     for category_id in leaf_id_list:
+        fetched_count = 0
+        kept_count = 0
         page = 1
         
         while True:
@@ -1665,6 +1927,8 @@ def find_products():
                 data = response.json()
                 products = data.get('data', [])
                 links = data.get('links', {})
+
+                fetched_count += len(products)
                 
                 # Add current page products (including last page)
                 for product in products:
@@ -1674,32 +1938,35 @@ def find_products():
                     store = product.get('store')
                     if store and isinstance(store, dict):
                         store_name = store.get('name', 'Unknown')
+                        store_key = store.get('id') or store_name
                     else:
                         store_name = 'Unknown'
+                        store_key = 'Unknown'
                     
-                    # Create unique key combining EAN and store to allow same product from different stores
-                    # If no EAN, use product ID to ensure uniqueness
+                    # Create unique key combining EAN and store to allow same product from different stores.
+                    # NOTE: Do NOT filter by nutrition_unit here; that unit is for nutrition entry/display,
+                    # not for selecting products from a category.
+                    pid = product.get('id')
                     if ean:
-                        product_key = (ean, store_name)
+                        product_key = (str(ean), str(store_key))
+                    elif pid is not None:
+                        product_key = (f"id:{pid}", str(store_key))
                     else:
-                        # Products without EAN are considered unique (use ID)
-                        product_key = (product.get('id'), store_name)
-                    
-                    if product_key not in seen_products:
-                        seen_products.add(product_key)
-                        
-                        # Filter by nutrition unit - only include products with matching weight_unit
-                        product_weight_unit = product.get('weight_unit', '')
-                        if product_weight_unit != nutrition_unit:
-                            continue  # Skip products that don't match the selected unit
-                        
-                        # Get category info
-                        categories = product.get('category', [])
-                        category_names = [c.get('name') for c in categories if c.get('name')]
-                        origin_name = expanded_category_ids.get(str(category_id))
-                        category_path = ' > '.join(category_names) if category_names else origin_name
-                        
-                        all_products.append({
+                        # Extremely defensive fallback if API payload is missing both ean and id.
+                        product_key = (f"url:{product.get('url') or product.get('name')}", str(store_key))
+
+                    if product_key in seen_products:
+                        continue
+
+                    seen_products.add(product_key)
+
+                    # Get category info
+                    categories = product.get('category', [])
+                    category_names = [c.get('name') for c in categories if c.get('name')]
+                    origin_name = expanded_category_ids.get(str(category_id))
+                    category_path = ' > '.join(category_names) if category_names else origin_name
+
+                    all_products.append({
                             'id': product['id'],
                             'name': product['name'],
                             'ean': ean,
@@ -1729,6 +1996,8 @@ def find_products():
                             'vendor': product.get('vendor')
                         })
 
+                    kept_count += 1
+
                 # Stop if no more products or no next page
                 links = data.get('links', {})
                 if not products or not links.get('next'):
@@ -1739,6 +2008,8 @@ def find_products():
             except Exception as e:
                 print(f"Error fetching products for category {category_id}: {e}")
                 break
+
+        print(f"Category {category_id}: fetched {fetched_count}, kept {kept_count} (after dedupe)")
 
     # Group products by relevant properties for comparison
     product_matrix = {

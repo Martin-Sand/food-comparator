@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - Compara</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-content">
+            <a href="/" class="site-title">Compara</a>
+        </div>
+    </header>
+    
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1>📧 Verify Your Email</h1>
+            <p class="auth-subtitle">We've sent a 6-digit verification code to:</p>
+            <p class="email-display"><strong>{{ email }}</strong></p>
+            
+            <form method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="code">Enter Verification Code</label>
+                    <input type="text" id="code" name="code" required maxlength="6" pattern="\d{6}" 
+                           placeholder="000000" autocomplete="off" 
+                           style="text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: bold;">
+                    <small class="help-text">Enter the 6-digit code from your email</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Verify Email</button>
+            </form>
+            
+            <div class="auth-divider">
+                <span>Didn't receive the code?</span>
+            </div>
+            
+            <form method="POST" action="{{ url_for('resend_verification') }}" style="margin-top: 1em;">
+                <button type="submit" class="btn btn-secondary btn-block">Resend Code</button>
+            </form>
+            
+            <div class="auth-links" style="margin-top: 1.5em;">
+                <a href="{{ url_for('register') }}">Back to Registration</a>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .auth-container {
+            max-width: 450px;
+            margin: 2em auto;
+            padding: 0 20px;
+        }
+        
+        .email-display {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            margin: 1em 0;
+            word-break: break-all;
+        }
+        
+        .email-display strong {
+            color: #667eea;
+        }
+        
+        .auth-divider {
+            text-align: center;
+            margin: 1.5em 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .help-text {
+            display: block;
+            margin-top: 0.5em;
+            font-size: 0.85em;
+            color: #666;
+        }
+    </style>
+</body>
+</html>

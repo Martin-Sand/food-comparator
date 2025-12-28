@@ -613,9 +613,16 @@ function renderProducts() {
     console.log(`After grouping by EAN: ${groups.length} unique products`);
     
     groups.forEach(g => {
-        g.minPrice = Math.min(...g.stores.map(s => s.price || Infinity));
-        g.minUnitPrice = Math.min(...g.stores.map(s => s.unit_price || Infinity));
+        g.minPrice = Math.min(
+            ...g.stores.map(s => (isFiniteNumber(s.price) ? s.price : Infinity))
+        );
+        g.minUnitPrice = Math.min(
+            ...g.stores.map(s => (isFiniteNumber(s.unit_price) ? s.unit_price : Infinity))
+        );
     });
+
+    // Remove groups that have no known/finite price at all
+    groups = groups.filter(g => isFiniteNumber(g.minPrice) && g.minPrice !== Infinity);
     
     // Filter out product groups with no nutrition data if toggle is active
     if (currentFilters.hideNoNutrition) {
@@ -661,14 +668,12 @@ function renderProducts() {
                 <div class="product-name">${group.name}</div>
                 ${group.brand ? `<div class="product-brand">${group.brand}</div>` : ''}
                 <div class="product-price">${formatPrice(group.minPrice)}</div>
-                <div class="product-unit-price">${isFiniteNumber(group.minUnitPrice) ? `From ${formatUnitPrice(group.minUnitPrice)}` : ''}</div>
                 <div class="store-list">
-                    ${group.stores.map(s => `
+                    ${group.stores.filter(s => isFiniteNumber(s.price)).map(s => `
                         <div class="store-row">
                             <span class="store-name">${s.store || ''}</span>
                             <span>
                                 <span class="store-price">${formatPrice(s.price)}</span>
-                                ${isFiniteNumber(s.unit_price) ? `<span class="store-unit"> (${formatUnitPrice(s.unit_price, s.weight_unit)})</span>` : ''}
                             </span>
                         </div>
                     `).join('')}

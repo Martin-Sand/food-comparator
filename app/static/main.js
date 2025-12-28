@@ -471,10 +471,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Restore selected categories
                 if (search.selected_categories && Array.isArray(search.selected_categories)) {
-                    selectedCategories = search.selected_categories.map(cat => ({
-                        id: cat.id || cat,
-                        name: cat.name || cat
-                    }));
+                    selectedCategories = search.selected_categories
+                        .map(cat => {
+                            let id = cat.id || cat;
+                            let name = cat.name || cat;
+                            // Validate that ID is numeric
+                            if (typeof id === 'string' && isNaN(parseInt(id))) {
+                                console.warn('Skipping invalid category:', id);
+                                return null;
+                            }
+                            return { id: id, name: name };
+                        })
+                        .filter(cat => cat !== null);
+                    
+                    if (selectedCategories.length === 0) {
+                        showToast('⚠️ This saved search has invalid categories. Please re-select.', 'error');
+                    }
                     renderSelectedCategories();
                 }
                 
@@ -504,10 +516,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Restore categories (read-only)
                 if (search.selected_categories && Array.isArray(search.selected_categories)) {
-                    selectedCategories = search.selected_categories.map(cat => ({
-                        id: cat.id || cat,
-                        name: cat.name || cat
-                    }));
+                    selectedCategories = search.selected_categories
+                        .map(cat => {
+                            let id = cat.id || cat;
+                            let name = cat.name || cat;
+                            // Validate that ID is numeric
+                            if (typeof id === 'string' && isNaN(parseInt(id))) {
+                                console.warn('Skipping invalid category:', id);
+                                return null;
+                            }
+                            return { id: id, name: name };
+                        })
+                        .filter(cat => cat !== null);
+                    
+                    if (selectedCategories.length === 0) {
+                        showToast('⚠️ This saved search has invalid categories. Please re-select.', 'error');
+                    }
                     renderSelectedCategories();
                 }
                 
@@ -542,10 +566,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Restore selected categories
                 if (search.selected_categories && Array.isArray(search.selected_categories)) {
-                    selectedCategories = search.selected_categories.map(cat => ({
-                        id: cat.id || cat,
-                        name: cat.name || cat
-                    }));
+                    selectedCategories = search.selected_categories
+                        .map(cat => {
+                            let id = cat.id || cat;
+                            let name = cat.name || cat;
+                            // Validate that ID is numeric
+                            if (typeof id === 'string' && isNaN(parseInt(id))) {
+                                console.warn('Skipping invalid category:', id);
+                                return null;
+                            }
+                            return { id: id, name: name };
+                        })
+                        .filter(cat => cat !== null);
+                    
+                    if (selectedCategories.length === 0) {
+                        showToast('⚠️ This saved search has invalid categories. Please re-select.', 'error');
+                    }
                     renderSelectedCategories();
                 }
                 
@@ -772,6 +808,14 @@ document.getElementById('find-products').onclick = async function() {
             if (response.status === 429) {
                 const errorData = await response.json();
                 showToast(errorData.message || 'Daily explore limit reached. Upgrade to Premium for unlimited access!', 'error');
+                this.textContent = 'Find Products';
+                this.disabled = false;
+                return;
+            }
+            // Check for bad request (invalid categories)
+            if (response.status === 400) {
+                const errorData = await response.json();
+                showToast(errorData.error || 'Invalid request. Please check your selections.', 'error');
                 this.textContent = 'Find Products';
                 this.disabled = false;
                 return;

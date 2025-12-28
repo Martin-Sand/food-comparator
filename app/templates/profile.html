@@ -150,7 +150,7 @@
             <h2>Danger Zone</h2>
             <div class="profile-card">
                 <p>Once you delete your account, there is no going back. This action will permanently delete all your saved searches and data.</p>
-                <button id="delete-account-btn" class="btn btn-danger" disabled>Delete Account (Coming Soon)</button>
+                <button id="delete-account-btn" class="btn btn-danger">Delete Account</button>
             </div>
         </section>
     </div>
@@ -295,6 +295,44 @@
                 showToast('Error opening subscription management', 'error');
             }
         }
+        
+        // Delete account
+        document.getElementById('delete-account-btn').addEventListener('click', async () => {
+            const confirmMessage = 'Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.';
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            const password = prompt('Please enter your password to confirm account deletion:');
+            
+            if (!password) {
+                showToast('Account deletion cancelled', 'info');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/delete_account', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Account deleted successfully. Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    showToast(data.error || 'Failed to delete account', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                showToast('Failed to delete account', 'error');
+            }
+        });
     </script>
 </body>
 </html>
