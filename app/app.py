@@ -27,7 +27,8 @@ import string
 load_dotenv()
 
 # Initialize OpenAI client
-openai_client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+_openai_api_key = os.environ.get('OPENAI_API_KEY')
+openai_client = OpenAI(api_key=_openai_api_key) if _openai_api_key else None
 
 # Initialize Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
@@ -37,6 +38,11 @@ STRIPE_PRICE_ID = os.environ.get('STRIPE_PRICE_ID')  # Your recurring price ID f
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(16))
+
+
+@app.get('/health')
+def healthcheck():
+    return jsonify({'ok': True}), 200
 
 # ============================
 # Database Configuration
@@ -1553,8 +1559,8 @@ def extract_nutrition_from_image():
     This bypasses OCR entirely - GPT-4 Vision reads the label directly!
     """
     # Check if OpenAI API key is configured
-    if not os.environ.get('OPENAI_API_KEY'):
-        return jsonify({'error': 'OpenAI API key not configured. Please add OPENAI_API_KEY to .env file.'}), 500
+    if openai_client is None:
+        return jsonify({'error': 'OpenAI API key not configured'}), 503
     
     # Check if image was provided
     if 'image' not in request.files:
@@ -1669,8 +1675,8 @@ def extract_nutrition_ai():
     and extract structured data with proper value correction.
     """
     # Check if OpenAI API key is configured
-    if not os.environ.get('OPENAI_API_KEY'):
-        return jsonify({'error': 'OpenAI API key not configured'}), 500
+    if openai_client is None:
+        return jsonify({'error': 'OpenAI API key not configured'}), 503
     
     data = request.json or {}
     text = data.get('text', '').strip()
