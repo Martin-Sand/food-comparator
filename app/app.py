@@ -40,6 +40,20 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(16))
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {'1', 'true', 't', 'yes', 'y', 'on'}
+
+
+def _env_int(name: str, default: int) -> int:
+    value = os.environ.get(name)
+    if value is None or value.strip() == '':
+        return default
+    return int(value)
+
+
 @app.get('/health')
 def healthcheck():
     return jsonify({'ok': True}), 200
@@ -70,11 +84,13 @@ migrate = Migrate(app, db)
 
 # Email Configuration
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True') == 'True'
+app.config['MAIL_PORT'] = _env_int('MAIL_PORT', 587)
+app.config['MAIL_USE_TLS'] = _env_bool('MAIL_USE_TLS', True)
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', os.environ.get('MAIL_USERNAME'))
+app.config['MAIL_SUPPRESS_SEND'] = _env_bool('MAIL_SUPPRESS_SEND', False)
+app.config['MAIL_TIMEOUT'] = _env_int('MAIL_TIMEOUT', 10)
 mail = Mail(app)
 
 # ============================
@@ -284,9 +300,12 @@ def generate_verification_code():
 def send_verification_email(user_email, code):
     """Send verification code to user's email."""
     try:
+        start = time.monotonic()
+        sender = app.config.get('MAIL_DEFAULT_SENDER') or app.config.get('MAIL_USERNAME')
         msg = Message(
             'Verify Your Email - Compara',
-            recipients=[user_email]
+            recipients=[user_email],
+            sender=sender,
         )
         msg.body = f'''Hello,
 
@@ -320,9 +339,14 @@ The Compara Team
 </html>
 '''
         mail.send(msg)
+        app.logger.info(
+            'Sent verification email to %s in %.2fs',
+            user_email,
+            time.monotonic() - start,
+        )
         return True
     except Exception as e:
-        print(f"Error sending verification email: {e}")
+        app.logger.exception('Error sending verification email to %s: %s', user_email, e)
         return False
 
 # ============================
