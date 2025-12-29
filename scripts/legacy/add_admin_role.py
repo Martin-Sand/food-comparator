@@ -1,17 +1,22 @@
 """
-Migration script to add is_admin field and set masand97@gmail.com as admin.
-Run this once to update your database schema.
+Legacy one-off script (pre-Alembic baseline).
+
+Prefer: `flask --app app.app:app db upgrade` + proper migrations.
+
+Original purpose:
+- Add is_admin column
+- Mark a specific email as admin
 """
+
 import sys
 import os
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + '/../..')
 
-from app.app import app, db, User
+from app.app import app, db, User  # noqa: E402
+
 
 with app.app_context():
-    # Add the is_admin column to users table using raw SQL
     try:
         db.session.execute(db.text('ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT 0'))
         db.session.commit()
@@ -22,8 +27,7 @@ with app.app_context():
         else:
             print(f"Error adding column: {e}")
         db.session.rollback()
-    
-    # Set masand97@gmail.com as admin
+
     admin_user = User.query.filter_by(email='masand97@gmail.com').first()
     if admin_user:
         admin_user.is_admin = True
@@ -31,4 +35,3 @@ with app.app_context():
         print(f"✓ Set {admin_user.email} as admin!")
     else:
         print("⚠ User masand97@gmail.com not found. Please register this account first.")
-
