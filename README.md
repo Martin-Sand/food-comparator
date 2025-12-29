@@ -38,8 +38,8 @@
 5. **Post-Deployment**
    ```bash
    # In Railway shell:
-   flask db upgrade
-   python3 add_admin_role.py
+   flask --app app.app:app db upgrade
+   python3 scripts/make_admin.py you@example.com
    ```
 
 6. **Update Stripe Webhook**
@@ -70,13 +70,13 @@ Your app includes Flask-Migrate for database management:
 
 ```bash
 # Create migration
-flask db migrate -m "description"
+flask --app app.app:app db migrate -m "description"
 
 # Apply migration
-flask db upgrade
+flask --app app.app:app db upgrade
 
 # Rollback
-flask db downgrade
+flask --app app.app:app db downgrade
 ```
 
 ## Monitoring

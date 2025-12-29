@@ -43,12 +43,13 @@
 6. **Run Database Migrations**
    - In Railway dashboard, open your service
    - Click "Settings" → "Service" → "Command"
-   - Run: `flask db upgrade`
+   - Normally migrations run automatically on deploy.
+   - If you need to run manually: `flask --app app.app:app db upgrade`
 
 7. **Set Up Admin User**
-   - Run the migration script in Railway's terminal:
+    - In Railway's terminal:
      ```bash
-     python3 add_admin_role.py
+       python3 scripts/make_admin.py you@example.com
      ```
 
 ### Stripe Webhook Setup
@@ -91,8 +92,8 @@ After deployment, update your Stripe webhook URL:
 
 6. **Run Migrations**
    - In Render dashboard, go to Shell
-   - Run: `flask db upgrade`
-   - Run: `python3 add_admin_role.py`
+   - Run: `flask --app app.app:app db upgrade`
+   - Run: `python3 scripts/make_admin.py you@example.com`
 
 ---
 

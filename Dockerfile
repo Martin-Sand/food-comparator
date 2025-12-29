@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Install system dependencies for Pillow and other packages
 RUN apt-get update && apt-get install -y \
+    ca-certificates \
     gcc \
     tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
@@ -26,6 +27,7 @@ RUN mkdir -p instance
 ENV FLASK_APP=app/app.py
 ENV PYTHONUNBUFFERED=1
 
-# Run the application using gunicorn directly with shell form
-# Shell form is required for environment variable expansion
-CMD gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app.app:app
+RUN chmod +x /app/start.sh
+
+# Run migrations, then start the web server
+CMD ["/app/start.sh"]

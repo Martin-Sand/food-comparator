@@ -96,7 +96,7 @@ Once deployed, open Railway shell:
 flask db upgrade
 
 # Make yourself admin (replace with your email)
-python3 add_admin_role.py
+python3 scripts/make_admin.py you@example.com
 ```
 
 ### 6. Configure Stripe Webhook
