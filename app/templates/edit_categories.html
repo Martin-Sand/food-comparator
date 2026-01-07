@@ -97,7 +97,7 @@
             <div class="header-right">
                 {% if current_user.is_authenticated %}
                     <div class="user-account-info">
-                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        <span class="user-email">{{ current_user.email }}</span>
                         {% if current_user.is_subscribed() %}
                             <span class="badge-premium">Premium</span>
                         {% else %}
@@ -115,7 +115,7 @@
     
     <div class="edit-page">
         <div class="edit-header">
-            <h1>📋 Edit Categories</h1>
+            <h1>Edit Categories</h1>
             <div class="edit-subtitle" id="search-name-display"></div>
         </div>
         
@@ -129,7 +129,7 @@
         </div>
         
         <div class="action-buttons">
-            <button class="btn-save" id="save-btn">💾 Save Changes</button>
+            <button class="btn-save" id="save-btn">Save Changes</button>
             <button class="btn-cancel" id="cancel-btn">Cancel</button>
         </div>
     </div>

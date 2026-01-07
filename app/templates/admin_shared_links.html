@@ -205,7 +205,7 @@
             <a href="/" class="site-title">Compara</a>
             <div class="header-right">
                 <div class="user-account-info">
-                    <span class="user-email">👤 {{ current_user.email }}</span>
+                    <span class="user-email">{{ current_user.email }}</span>
                     {% if current_user.is_subscribed() %}
                         <span class="badge-premium">Premium</span>
                     {% else %}

@@ -14,7 +14,7 @@
             <div class="header-right">
                 {% if current_user.is_authenticated %}
                     <div class="user-account-info">
-                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        <span class="user-email">{{ current_user.email }}</span>
                         {% if current_user.is_subscribed() %}
                             <span class="badge-premium">Premium</span>
                         {% else %}
@@ -39,7 +39,7 @@
     </header>
     
     <div class="container profile-container">
-        <h1>👤 Profile Settings</h1>
+        <h1>Profile Settings</h1>
         
         <!-- Account Information Section -->
         <section class="profile-section">

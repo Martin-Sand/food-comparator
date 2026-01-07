@@ -48,7 +48,7 @@ let nutritionUnit = 'g'; // Default to grams, will be updated from API data
 let currentFilters = {
     search: '',
     sortBy: 'price_asc',
-    showNutrition: true, // Show nutrition by default
+    showNutrition: false, // Nutrition collapsed by default (toggle per card)
     showAllergens: false,
     showCharts: false, // Pie charts hidden by default
     hideNoNutrition: false, // Don't hide products without nutrition by default
@@ -324,9 +324,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (deleteSelectedBtn) {
                 deleteSelectedBtn.style.display = anyChecked ? 'inline-block' : 'none';
                 const count = Array.from(checkboxes).filter(cb => cb.checked).length;
-                deleteSelectedBtn.textContent = `🗑️ Delete Selected (${count})`;
+                deleteSelectedBtn.textContent = `Delete Selected (${count})`;
             }
-            selectAllBtn.textContent = allChecked ? '☑ Select All' : '☐ Deselect All';
+            selectAllBtn.textContent = allChecked ? 'Select All' : 'Deselect All';
         });
     }
     
@@ -349,6 +349,29 @@ window.addEventListener('DOMContentLoaded', async () => {
                     renderProducts();
                 }
             }
+        });
+    }
+    
+    // Expand all nutrition button
+    const expandAllNutritionBtn = document.getElementById('expand-all-nutrition');
+    if (expandAllNutritionBtn) {
+        expandAllNutritionBtn.addEventListener('click', () => {
+            const nutritionLists = document.querySelectorAll('.nutrition-list');
+            const nutritionToggles = document.querySelectorAll('.nutrition-toggle-arrow');
+            
+            // Check if all are expanded
+            const allExpanded = Array.from(nutritionLists).every(list => list.style.display !== 'none');
+            
+            // Toggle all
+            nutritionLists.forEach(list => {
+                list.style.display = allExpanded ? 'none' : 'block';
+            });
+            nutritionToggles.forEach(arrow => {
+                arrow.textContent = allExpanded ? '▼' : '▲';
+            });
+            
+            // Update button text
+            expandAllNutritionBtn.textContent = allExpanded ? 'Expand All Nutrition' : 'Collapse All Nutrition';
         });
     }
     
@@ -455,6 +478,10 @@ function getFilteredAndSortedProducts() {
                 return a.name.localeCompare(b.name);
             case 'name_desc':
                 return b.name.localeCompare(a.name);
+            case 'updated_desc':
+                return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
+            case 'updated_asc':
+                return new Date(a.updated_at || 0) - new Date(b.updated_at || 0);
             default:
                 return 0;
         }
@@ -645,6 +672,10 @@ function renderProducts() {
                 return (b.minUnitPrice || -Infinity) - (a.minUnitPrice || -Infinity);
             case 'name_desc':
                 return b.name.localeCompare(a.name);
+            case 'updated_desc':
+                return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
+            case 'updated_asc':
+                return new Date(a.updated_at || 0) - new Date(b.updated_at || 0);
             case 'name_asc':
             default:
                 return a.name.localeCompare(b.name);
@@ -678,7 +709,7 @@ function renderProducts() {
                         </div>
                     `).join('')}
                 </div>
-                ${currentFilters.showNutrition ? renderNutrition(group.nutrition) : ''}
+                ${renderNutrition(group.nutrition)}
                 ${currentFilters.showAllergens && group.allergens ? renderAllergens(group.allergens) : ''}
                 ${userProduct ? renderComparisonBadges(group.nutrition, userProduct.nutrition) : ''}
                 ${group.updated_at ? `<div class="product-updated">Last updated: ${formatDate(group.updated_at)}</div>` : ''}
@@ -702,6 +733,21 @@ function renderProducts() {
         });
     });
 
+    // Add event listeners for nutrition card toggles
+    grid.querySelectorAll('.nutrition-toggle').forEach(toggle => {
+        toggle.style.cursor = 'pointer';
+        toggle.addEventListener('click', (e) => {
+            const targetId = toggle.getAttribute('data-target');
+            const nutritionList = document.getElementById(targetId);
+            const arrow = toggle.querySelector('.nutrition-toggle-arrow');
+            if (nutritionList && arrow) {
+                const isVisible = nutritionList.style.display !== 'none';
+                nutritionList.style.display = isVisible ? 'none' : 'block';
+                arrow.textContent = isVisible ? '▼' : '▲';
+            }
+        });
+    });
+
     // Add checkbox event listeners to show/hide delete button
     const checkboxes = grid.querySelectorAll('.product-select-checkbox');
     const deleteBtn = document.getElementById('delete-selected');
@@ -710,7 +756,7 @@ function renderProducts() {
     // Show/hide select all button based on whether there are products
     if (selectAllBtn) {
         selectAllBtn.style.display = checkboxes.length > 0 ? 'inline-block' : 'none';
-        selectAllBtn.textContent = '☑ Select All';
+        selectAllBtn.textContent = 'Select All';
     }
     
     checkboxes.forEach(checkbox => {
@@ -721,11 +767,11 @@ function renderProducts() {
             if (deleteBtn) {
                 deleteBtn.style.display = anyChecked ? 'inline-block' : 'none';
                 const count = Array.from(checkboxes).filter(cb => cb.checked).length;
-                deleteBtn.textContent = `🗑️ Delete Selected (${count})`;
+                deleteBtn.textContent = `Delete Selected (${count})`;
             }
             
             if (selectAllBtn) {
-                selectAllBtn.textContent = allChecked ? '☐ Deselect All' : '☑ Select All';
+                selectAllBtn.textContent = allChecked ? 'Deselect All' : 'Select All';
             }
         });
     });
@@ -1436,14 +1482,15 @@ function renderNutrition(nutrition) {
     });
     
     const unitLabel = nutritionUnit === 'g' ? 'per 100g' : 'per 100ml';
+    const nutritionId = `nutrition-${Math.random().toString(36).substr(2,9)}`;
 
     return `
         <div class="nutrition-display">
-            <div class="nutrition-header">
-                <h4>Nutrition Facts</h4>
+            <div class="nutrition-header nutrition-toggle" data-target="${nutritionId}">
+                <h4>Nutrition Facts <span class="nutrition-toggle-arrow">▼</span></h4>
                 <span class="nutrition-serving">${unitLabel}</span>
             </div>
-            <div class="nutrition-list">
+            <div class="nutrition-list" id="${nutritionId}" style="display: none;">
                 ${rows}
             </div>
         </div>

@@ -209,7 +209,7 @@
             <div class="header-right">
                 {% if current_user.is_authenticated %}
                     <div class="user-account-info">
-                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        <span class="user-email">{{ current_user.email }}</span>
                         {% if current_user.is_subscribed() %}
                             <span class="badge-premium">Premium</span>
                         {% else %}
@@ -232,7 +232,7 @@
     
     <div class="saved-searches-page">
         <div class="page-header">
-            <h1>💾 Saved Searches</h1>
+            <h1>Saved Searches</h1>
             <a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
         </div>
         
@@ -333,7 +333,7 @@
                                     </div>
                                     <div class="search-actions">
                                         <button class="btn btn-load" onclick="loadSearch(${search.id})">Load</button>
-                                        <button class="btn btn-edit btn-small" onclick="editCategories(${search.id})">📋 Edit Categories</button>
+                                        <button class="btn btn-edit btn-small" onclick="editCategories(${search.id})">Edit Categories</button>
                                         <button class="btn btn-edit btn-small" onclick="editNutrition(${search.id})">🍎 Edit Nutrition</button>
                                         <button class="btn btn-delete" onclick="deleteSearch(${search.id})">Delete</button>
                                     </div>

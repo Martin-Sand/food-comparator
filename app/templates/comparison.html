@@ -16,7 +16,7 @@
             <div class="header-right">
                 {% if current_user.is_authenticated %}
                     <div class="user-account-info">
-                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        <span class="user-email">{{ current_user.email }}</span>
                         {% if current_user.is_subscribed() %}
                             <span class="badge-premium">Premium</span>
                         {% else %}
@@ -44,7 +44,7 @@
         <header class="comparison-header">
             <div class="header-actions">
                 {% if current_user.is_authenticated and current_user.is_subscribed() %}
-                <button id="save-search-btn" class="save-search-btn">💾 Save Search</button>
+                <button id="save-search-btn" class="save-search-btn">Save Search</button>
                 <button id="share-comparison-btn" class="save-search-btn">🔗 Share Comparison</button>
                 {% endif %}
             </div>
@@ -82,19 +82,22 @@
                         <option value="unit_price_desc">Unit Price (High to Low)</option>
                         <option value="name_asc">Name (A to Z)</option>
                         <option value="name_desc">Name (Z to A)</option>
+                        <option value="updated_desc">Last Updated (Newest First)</option>
+                        <option value="updated_asc">Last Updated (Oldest First)</option>
                     </select>
                 </div>
                 
                 <div class="view-controls">
                     <!-- Selection buttons -->
                     <div class="button-group selection-group">
-                        <button id="select-all-products" style="display: none;">☑ Select All</button>
-                        <button id="delete-selected" class="delete-selected-btn" style="display: none;">🗑️ Delete Selected</button>
+                        <button id="select-all-products" style="display: none;">Select All</button>
+                        <button id="delete-selected" class="delete-selected-btn" style="display: none;">Delete Selected</button>
+                        <button id="expand-all-nutrition">Expand All Nutrition</button>
                     </div>
                     
                     <!-- View toggle dropdown -->
                     <div class="dropdown">
-                        <button class="dropdown-btn" id="view-dropdown-btn">👁 View Options ▾</button>
+                        <button class="dropdown-btn" id="view-dropdown-btn">View Options ▾</button>
                         <div class="dropdown-content" id="view-dropdown">
                             <button id="toggle-nutrition">Nutrition Info</button>
                             <button id="toggle-allergens">Allergens</button>

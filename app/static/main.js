@@ -291,14 +291,6 @@ function renderCategorySelectors(path = []) {
     
     treeView.appendChild(treeContainer);
     
-    // Add button to add selected categories
-    const addButton = document.createElement('button');
-    addButton.type = 'button';
-    addButton.className = 'add-categories-btn';
-    addButton.textContent = 'Add Selected Categories';
-    addButton.onclick = addSelectedTreeCategories;
-    treeView.appendChild(addButton);
-    
     container.appendChild(treeView);
 
     // Hook up search filtering
@@ -349,6 +341,24 @@ function renderCategoryTree(categories, container, parentPath, forceExpanded = f
         if (selectedCategories.some(sc => sc.id === category.id)) {
             checkbox.checked = true;
         }
+        
+        // Add immediate change handler
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                // Add category if not already present
+                if (!selectedCategories.some(c => c.id === category.id)) {
+                    selectedCategories.push({ 
+                        id: category.id, 
+                        name: currentPath.join(' > ')
+                    });
+                    renderSelectedCategories();
+                }
+            } else {
+                // Remove category
+                selectedCategories = selectedCategories.filter(c => c.id !== category.id);
+                renderSelectedCategories();
+            }
+        });
         
         itemContent.appendChild(checkbox);
         
@@ -728,7 +738,13 @@ function renderSelectedCategories() {
         const remove = document.createElement('button');
         remove.textContent = '×';
         remove.onclick = () => {
+            // Remove from array
             selectedCategories.splice(idx, 1);
+            // Uncheck the corresponding checkbox in the tree
+            const checkbox = document.querySelector(`.tree-checkbox[value="${cat.id}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+            }
             renderSelectedCategories();
         };
         el.appendChild(remove);

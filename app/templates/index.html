@@ -14,7 +14,7 @@
             <div class="header-right">
                 {% if current_user.is_authenticated %}
                     <div class="user-account-info">
-                        <span class="user-email">👤 {{ current_user.email }}</span>
+                        <span class="user-email">{{ current_user.email }}</span>
                         {% if current_user.is_subscribed() %}
                             <span class="badge-premium">Premium</span>
                         {% else %}
@@ -82,7 +82,7 @@
                     <h2 class="section-title">Your Product</h2>
                     {% if current_user.is_authenticated and current_user.is_subscribed() %}
                     <div class="saved-searches-dropdown dropdown">
-                        <button type="button" class="dropdown-btn" id="saved-searches-dropdown-btn">💾 Saved Searches ▾</button>
+                        <button type="button" class="dropdown-btn" id="saved-searches-dropdown-btn">Saved Searches ▾</button>
                         <div class="dropdown-content" id="saved-searches-dropdown">
                             <div class="dropdown-loading">Loading...</div>
                         </div>
@@ -116,7 +116,7 @@
                 
                 <fieldset class="nutrition-group">
                     <legend>Nutrition (<span id="nutrition-legend-unit">per 100g</span>)</legend>
-                    <button type="button" id="paste-nutrition-btn" class="secondary-btn" style="margin-bottom: 1rem;">📋 Paste Nutrition Text</button>
+                    <button type="button" id="paste-nutrition-btn" class="secondary-btn" style="margin-bottom: 1rem;">Upload Data</button>
                     <div class="nutrition-fields">
                         <!-- Macro clusters at top -->
                         <div class="macro-cluster">
@@ -165,17 +165,16 @@
             
             <!-- Category Selection - visible in both modes -->
             <div class="category-selection-section">
+                {% if current_user.is_authenticated and current_user.is_subscribed() %}
                 <div class="section-header">
-                    <h2 class="section-title" id="category-section-title">Select Categories</h2>
-                    {% if current_user.is_authenticated and current_user.is_subscribed() %}
                     <div class="saved-searches-dropdown dropdown" style="display: none;">
-                        <button type="button" class="dropdown-btn" id="saved-searches-dropdown-btn-explore">💾 Saved Searches ▾</button>
+                        <button type="button" class="dropdown-btn" id="saved-searches-dropdown-btn-explore">Saved Searches ▾</button>
                         <div class="dropdown-content" id="saved-searches-dropdown-explore">
                             <div class="dropdown-loading">Loading...</div>
                         </div>
                     </div>
-                    {% endif %}
                 </div>
+                {% endif %}
                 <div class="form-group">
                     <div id="category-selectors"></div>
                 </div>
@@ -183,7 +182,6 @@
                 <button type="button" id="find-products" class="find-products-btn">Find Products</button>
             </div>
         </form>
-        <div id="comparison-table"></div>
     </div>
     
     <!-- Nutrition Text Parser Modal -->
