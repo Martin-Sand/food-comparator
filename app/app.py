@@ -93,6 +93,56 @@ app.config['MAIL_SUPPRESS_SEND'] = _env_bool('MAIL_SUPPRESS_SEND', False)
 app.config['MAIL_TIMEOUT'] = _env_int('MAIL_TIMEOUT', 10)
 mail = Mail(app)
 
+
+def _email_provider() -> str:
+    # Supported values: "smtp" (default), "resend"
+    return (os.environ.get('EMAIL_PROVIDER') or 'smtp').strip().lower()
+
+
+def _resend_send_email(*, to_email: str, subject: str, text: str, html: str) -> bool:
+    api_key = os.environ.get('RESEND_API_KEY')
+    if not api_key:
+        app.logger.error('RESEND_API_KEY is not set')
+        return False
+
+    sender = (
+        os.environ.get('MAIL_FROM')
+        or os.environ.get('RESEND_FROM')
+        or app.config.get('MAIL_DEFAULT_SENDER')
+        or os.environ.get('MAIL_USERNAME')
+    )
+    if not sender:
+        app.logger.error('Missing sender address: set MAIL_FROM (recommended)')
+        return False
+
+    timeout_s = _env_int('MAIL_TIMEOUT', 10)
+    try:
+        resp = requests.post(
+            'https://api.resend.com/emails',
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json',
+            },
+            json={
+                'from': sender,
+                'to': [to_email],
+                'subject': subject,
+                'text': text,
+                'html': html,
+            },
+            timeout=timeout_s,
+        )
+    except Exception as exc:
+        app.logger.exception('Resend request failed: %s', exc)
+        return False
+
+    if 200 <= resp.status_code < 300:
+        return True
+
+    # Include response body to make deploy debugging easier.
+    app.logger.error('Resend send failed: status=%s body=%s', resp.status_code, resp.text)
+    return False
+
 # ============================
 # Authentication Configuration
 # ============================
@@ -301,13 +351,10 @@ def send_verification_email(user_email, code):
     """Send verification code to user's email."""
     try:
         start = time.monotonic()
-        sender = app.config.get('MAIL_DEFAULT_SENDER') or app.config.get('MAIL_USERNAME')
-        msg = Message(
-            'Verify Your Email - Compara',
-            recipients=[user_email],
-            sender=sender,
-        )
-        msg.body = f'''Hello,
+        provider = _email_provider()
+        subject = 'Verify Your Email - Compara'
+
+        text_body = f'''Hello,
 
 Thank you for signing up for Compara!
 
@@ -320,7 +367,8 @@ If you didn't create an account, please ignore this email.
 Best regards,
 The Compara Team
 '''
-        msg.html = f'''
+
+        html_body = f'''
 <html>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -338,6 +386,30 @@ The Compara Team
 </body>
 </html>
 '''
+
+        if provider == 'resend':
+            ok = _resend_send_email(
+                to_email=user_email,
+                subject=subject,
+                text=text_body,
+                html=html_body,
+            )
+            if ok:
+                app.logger.info(
+                    'Sent verification email (resend) to %s in %.2fs',
+                    user_email,
+                    time.monotonic() - start,
+                )
+            return ok
+
+        sender = app.config.get('MAIL_DEFAULT_SENDER') or app.config.get('MAIL_USERNAME')
+        msg = Message(
+            subject,
+            recipients=[user_email],
+            sender=sender,
+        )
+        msg.body = text_body
+        msg.html = html_body
         mail.send(msg)
         app.logger.info(
             'Sent verification email to %s in %.2fs',
