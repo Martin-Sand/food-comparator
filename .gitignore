@@ -25,6 +25,7 @@ MANIFEST
 
 # Virtual Environment
 venv/
+.venv/
 env/
 ENV/
 env.bak/
@@ -36,6 +37,10 @@ venv.bak/
 .env.production
 app/.env
 *.env
+
+# Flask CLI local defaults
+.flaskenv
+app/.flaskenv
 
 # Database
 *.db
